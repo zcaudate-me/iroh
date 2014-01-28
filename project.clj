@@ -1,5 +1,5 @@
 (defproject im.chit/iroh "0.1.0-SNAPSHOT"
-  :description "Wield your java object with ease"
+  :description "An Intuitive Reflection API for clojure"
   :url "http://www.github.com/zcaudate/iroh"
   :license {:name "The MIT License"
             :url "http://http://opensource.org/licenses/MIT"}
