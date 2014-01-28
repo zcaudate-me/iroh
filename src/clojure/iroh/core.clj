@@ -20,7 +20,62 @@
 
 (defmacro .$> [obj & forms])
 
+(def sort-terms #{:by-name :by-params :by-flags :by-return-type})
 
-(.* 1)
+(def display-terms #{:name :params :flags :return-type :attributes})
 
-(.# Object :private)
+(defn argument-type [p]
+  (cond (sort-terms p)               :sort-terms
+        (display-terms p)            :display-terms
+        (keyword? p)                 :flags
+        (or (string? p) (regex? p))  :name
+        (or (set? p) (vector? p))    :params
+        (hash-map? p)                :attributes
+        (symbol? p)                  :return))
+
+(defn convert-param [p]
+  (condp = p
+    'bool 'Boolean/TYPE
+    'short 'Short/TYPE
+    'int 'Integer/TYPE
+    'long 'Long/TYPE
+    'float 'Float/TYPE
+    'double 'Double/TYPE
+    'void   'Void/TYPE
+    p))
+
+(defn convert-params [ps]
+  (map (fn [v]
+         (if (vector? v)
+           (mapv convert-param v)
+           (convert-param v)))
+       ps))
+
+(->> [:private :static '[int String] 'int :name :by-name]
+     (group-by param-type)
+     (#(update-in % [:params] convert-params))
+     (#(update-in % [:return] (comp convert-param last))))
+
+(comment
+  (defn group-by-search-terms [arr]
+    )
+
+  (.* 1)
+
+  (.# Object :private) ;; => lists all the private variables
+
+  (.# Object :private :static [int String]) ;; => lists all the private static members of return type int String
+
+  (.# Object :private :static :field)
+
+  (.# Object :private :static :method)
+
+  (.# Object :constructor)
+
+  (.# Object "toString")
+
+  (.# Object :private #"get")
+
+  (.# Object :static #"get")
+
+)
