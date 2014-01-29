@@ -1,11 +1,10 @@
-(ns iroh.element.constructor
-  (:require [iroh.types.element :refer [element
-                                        invoke-element
+(ns iroh.element.field
+  (:require [iroh.types.element :refer [invoke-element
                                         to-element
                                         format-element]]
-            [iroh.element.common :refer [seed class-name
-                                         prepare-params]]))
-
+            [iroh.element.common :refer [seed prepare-params]]
+            [iroh.util.class :refer [class-name]]))
+            
 (def patch-field
   (let [mf (.getDeclaredField java.lang.reflect.Field  "modifiers")]
     (.setAccessible mf true)

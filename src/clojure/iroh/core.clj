@@ -82,12 +82,20 @@
 (defn has-type? [type value]
   (= type value))
 
+(defn filter-by [f k grp eles]
+  (if-let [chk (get grp k)]
+    (filter (fn [ele]
+              (every? #(f % (get ele k)) chk))
+            eles)
+    eles))
+
 (defn filter-elements [grp eles]
   (->> eles
        (filter-by has-name?   :name grp)
        (filter-by has-params? :params grp)
        (filter-by has-type?   :type grp)
-       (filter-by has-modifier? :modifiers grp)))
+       (filter-by has-modifier? :modifiers grp)
+       ))
 
 (comment
   (group-arguments [:private :static '[int String] 'int :name :by-name])

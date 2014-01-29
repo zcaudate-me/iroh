@@ -3,8 +3,8 @@
                                         invoke-element
                                         to-element
                                         format-element]]
-            [iroh.element.common :refer [seed class-name
-                                         prepare-params]]))
+            [iroh.element.common :refer [seed prepare-params]]
+            [iroh.util.class :refer [class-name]]))
 
 (defmethod invoke-element :constructor [ele & args]
   (.newInstance (:delegate ele) (object-array args)))
