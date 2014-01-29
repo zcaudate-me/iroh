@@ -3,7 +3,7 @@
                                         invoke-element
                                         to-element
                                         format-element]]
-            [iroh.element.common :refer [seed simple-name
+            [iroh.element.common :refer [seed class-name
                                          prepare-params]]))
 
 (defmethod invoke-element :constructor [ele & args]
@@ -14,7 +14,7 @@
     (-> body
         (assoc :name "new")
         (assoc :static true)
-        (assoc :return-type (.getDeclaringClass obj))
+        (assoc :type (.getDeclaringClass obj))
         (assoc :params (vec (seq (.getParameterTypes obj))))
         (element))))
 
@@ -23,7 +23,7 @@
     (format "@(%s :: [%s] -> %s)"
                       (:name ele)
                       (clojure.string/join ", " params)
-                      (simple-name (:return-type ele)))))
+                      (class-name (:type ele)))))
 
 (comment
   (get (to-element (first (seq (.getDeclaredConstructors java.lang.Object))))

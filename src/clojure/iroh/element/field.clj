@@ -3,7 +3,7 @@
                                         invoke-element
                                         to-element
                                         format-element]]
-            [iroh.element.common :refer [seed simple-name
+            [iroh.element.common :refer [seed class-name
                                          prepare-params]]))
 
 (def patch-field
@@ -32,7 +32,7 @@
 (defmethod to-element java.lang.reflect.Field [obj]
   (let [body (seed :field obj)]
     (-> body
-        (assoc :return-type (.getType obj))
+        (assoc :type (.getType obj))
         (assoc :delegate (patch-field obj))
         (element))))
 
@@ -41,7 +41,7 @@
     (format "@(%s :: [%s] <=> %s)"
                       (:name ele)
                       (clojure.string/join ", " params)
-                      (simple-name (:return-type ele)))))
+                      (class-name (:type ele)))))
 
 (comment
   ((to-element (first (seq (.getDeclaredFields java.lang.Class)))))

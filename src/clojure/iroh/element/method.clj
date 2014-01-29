@@ -3,7 +3,7 @@
                                         invoke-element
                                         to-element
                                         format-element]]
-            [iroh.element.common :refer [seed simple-name
+            [iroh.element.common :refer [seed class-name
                                          prepare-params]]))
 
 (defmethod invoke-element :method
@@ -19,7 +19,7 @@
 (defmethod to-element java.lang.reflect.Method [obj]
   (let [body (seed :method obj)]
     (-> body
-        (assoc :return-type (.getReturnType obj))
+        (assoc :type (.getReturnType obj))
         (assoc :params (vec (seq (.getParameterTypes obj))))
         (element))))
 
@@ -28,7 +28,7 @@
     (format "@(%s :: [%s] -> %s)"
                       (:name ele)
                       (clojure.string/join ", " params)
-                      (simple-name (:return-type ele)))))
+                      (class-name (:type ele)))))
 
 (comment
   (get (to-element (first (seq (.getDeclaredMethods java.lang.Object))))

@@ -1,5 +1,11 @@
 (ns iroh.common)
 
+(defn hash-map? [x]
+  (instance? clojure.lang.APersistentMap x))
+
+(defn regex? [x]
+  (instance? java.util.regex.Pattern x))
+
 (defn assoc-if
   ([m k v] (assoc-if m k v identity))
   ([m k v f]
