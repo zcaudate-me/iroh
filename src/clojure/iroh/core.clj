@@ -1,6 +1,7 @@
 (ns iroh.core
   (:require [iroh.common :refer :all]
             [iroh.types.element :refer [to-element]]
+            [iroh.pretty.args :refer [group-arguments filter-elements]]
             [iroh.element.method]
             [iroh.element.field]
             [iroh.element.constructor]))
@@ -8,15 +9,38 @@
 (def ^:dynamic *static-description* (atom {}))
 (def ^:dynamic *instance-description* (atom {}))
 
+
+
+(defn select-elements [class selectors]
+  (filter-elements
+   (group-arguments selectors)
+   (map to-element
+        (concat
+         (seq (.getDeclaredMethods class))
+         (seq (.getDeclaredConstructors class))
+         (seq (.getDeclaredFields class))))))
+
 (defn dot-star [obj & selectors])
 
 (defmacro .* [obj & selectors]
   `(dot-star ~obj ~@selectors))
 
-(defn dot-hash [class & selectors])
+(defn dot-question [class & selectors]
+  (select-elements class selectors))
 
-(defmacro .# [class & selectors]
-  `(dot-hash ~class ~@selectors))
+(defmacro .? [class & selectors]
+  `(dot-question ~class ~@selectors))
+
+(defn dot-question> [class & selectors]
+  (let [eles (select-elements class selectors)
+        names (map :name eles)]
+    (if (apply = names)
+      (first eles)
+      (throw (Exception. (str "There are multiple named methods"
+                              (-> names distinct sort)))))))
+
+(defmacro .?> [class & selectors]
+  `(dot-question> ~class ~@selectors))
 
 (defn dot-dollar [obj method & args])
 
@@ -25,111 +49,25 @@
 
 (defmacro .$> [obj & forms])
 
-(def sort-terms #{:by-name :by-params :by-flags :by-return-type})
-
-(def display-terms #{:name :params :flags :return-type :attributes})
-
-(defn classify-argument [arg]
-  (cond (sort-terms arg)                 :sort-terms
-        (display-terms arg)              :display-terms
-
-        (keyword? arg)                   :modifiers
-        (or (string? arg) (regex? arg))  :name
-        (or (set? arg) (vector? arg))    :params
-        (hash-map? arg)                  :attributes
-        (symbol? arg)                    :type))
-
-(defn convert-argument [arg]
-  (condp = arg
-    'bool 'Boolean/TYPE
-    'short 'Short/TYPE
-    'int 'Integer/TYPE
-    'long 'Long/TYPE
-    'float 'Float/TYPE
-    'double 'Double/TYPE
-    'void   'Void/TYPE
-    arg))
-
-(defn convert-arguments [args]
-  (mapv (fn [v]
-         (if (vector? v)
-           (mapv convert-argument v)
-           (convert-argument v)))
-       args))
-
-(defn group-arguments [args]
-  (-> (group-by classify-argument args)
-      (update-in [:params] convert-arguments)
-      (update-in [:type] convert-arguments)))
-
-(defn has-name? [name value]
-  (cond (regex? name)
-        (re-find name value)
-
-        (string? name)
-        (= name value)))
-
-(defn has-params? [params value]
-  (cond (set? params)
-        (every? params value)
-
-        (vector? params)
-        (= params value)))
-
-(defn has-modifier? [modifier value]
-  (contains? value modifier))
-
-(defn has-type? [type value]
-  (= type value))
-
-(defn filter-by [f k grp eles]
-  (if-let [chk (get grp k)]
-    (filter (fn [ele]
-              (every? #(f % (get ele k)) chk))
-            eles)
-    eles))
-
-(defn filter-elements [grp eles]
-  (->> eles
-       (filter-by has-name?   :name grp)
-       (filter-by has-params? :params grp)
-       (filter-by has-type?   :type grp)
-       (filter-by has-modifier? :modifiers grp)
-       ))
-
 (comment
-  (group-arguments [:private :static '[int String] 'int :name :by-name])
-  => {:flags [:private :static]
-      :params '[[Integer/TYPE String]]
-      :return 'Integer/TYPE
-      :display-terms [:name]
-      :sort-terms [:by-name]}
 
-  (defn group-by-search-terms [arr]
-    )
+  (.% Object parseInt)
 
-  (filter-elements
-   (group-arguments ["toString"])
-   (map to-element
-        (seq (.getDeclaredMethods java.lang.Object))))
+  (>refresh)
+  (def f (-> (.? Integer :public #"parse")
+             first))
 
-  (filter-elements
-   (group-arguments [#"get"])
-   (map to-element
-        (seq (.getDeclaredMethods java.lang.Object))))
+  (Integer/parseInt)
 
-  (filter-elements
-   (group-arguments [:private])
-   (map to-element
-        (seq (.getDeclaredMethods java.lang.Object))))
-
-  (filter-elements
-   (group-arguments [:private :static])
-   (map to-element
-        (seq (.getDeclaredMethods java.lang.Class))))
+  (f "100")
 
   (Class/forName "[[[Ljava.lang.Object;")
+
   (.* 1)
+
+  (-> (.# Integer :private #"seri")
+      (get nil))
+  ((.# Integer :private) (int -1))
 
   (.# Object :private) ;; => lists all the private variables
 

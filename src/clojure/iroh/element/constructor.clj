@@ -1,10 +1,8 @@
 (ns iroh.element.constructor
-  (:require [iroh.types.element :refer [element
-                                        invoke-element
-                                        to-element
-                                        format-element]]
+  (:require [iroh.types.element :refer [element invoke-element
+                                        to-element format-element]]
             [iroh.element.common :refer [seed prepare-params]]
-            [iroh.util.class :refer [class-name]]))
+            [iroh.pretty.class :refer [class-name]]))
 
 (defmethod invoke-element :constructor [ele & args]
   (.newInstance (:delegate ele) (object-array args)))

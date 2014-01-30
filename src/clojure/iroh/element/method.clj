@@ -1,20 +1,18 @@
 (ns iroh.element.method
-  (:require [iroh.types.element :refer [element
-                                        invoke-element
-                                        to-element
-                                        format-element]]
+  (:require [iroh.types.element :refer [element invoke-element
+                                        to-element format-element]]
             [iroh.element.common :refer [seed prepare-params]]
-            [iroh.util.class :refer [class-name]]))
+            [iroh.pretty.class :refer [class-name]]))
 
 (defmethod invoke-element :method
   ([ele]
      (if (:static ele)
-       (.invoke (:delegate ele) [nil])
+       (.invoke (:delegate ele) nil (object-array []))
        (throw (Exception. "Cannot invoke non-static method element with no parameters"))))
   ([ele v & args]
      (if (:static ele)
-       (.invoke (:delegate ele) (cons nil (cons v args)))
-       (.invoke (:delegate ele) (cons v args)))))
+       (.invoke (:delegate ele) nil (object-array (cons v args)))
+       (.invoke (:delegate ele) v (object-array args)))))
 
 (defmethod to-element java.lang.reflect.Method [obj]
   (let [body (seed :method obj)]

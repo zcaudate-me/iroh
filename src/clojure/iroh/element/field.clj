@@ -1,10 +1,9 @@
 (ns iroh.element.field
-  (:require [iroh.types.element :refer [invoke-element
-                                        to-element
-                                        format-element]]
+  (:require [iroh.types.element :refer [element invoke-element
+                                        to-element format-element]]
             [iroh.element.common :refer [seed prepare-params]]
-            [iroh.util.class :refer [class-name]]))
-            
+            [iroh.pretty.class :refer [class-name]]))
+
 (def patch-field
   (let [mf (.getDeclaredField java.lang.reflect.Field  "modifiers")]
     (.setAccessible mf true)
@@ -37,10 +36,14 @@
 
 (defmethod format-element :field [ele]
   (let [params (prepare-params ele)]
-    (format "@(%s :: [%s] <=> %s)"
-                      (:name ele)
-                      (clojure.string/join ", " params)
-                      (class-name (:type ele)))))
+    (if (:static ele)
+      (format "@(%s :: %s)"
+              (:name ele)
+              (class-name (:type ele)))
+      (format "@(%s :: [%s] | %s)"
+              (:name ele)
+              (clojure.string/join ", " params)
+              (class-name (:type ele))))))
 
 (comment
   ((to-element (first (seq (.getDeclaredFields java.lang.Class)))))
@@ -49,7 +52,7 @@
     (filter (fn [ele] (= name (:name ele)))
             eles))
 
-  ((-> (->> (seq (.getDeclaredFields java.util.Date))
+  ((-> (->> (seq (.getDeclaredFields java.pretty.Date))
             (map to-element))
        (fnd "serialVersionUID")
        (first)))

@@ -1,6 +1,6 @@
 (ns iroh.element.common
   (:require [iroh.types.modifiers :refer [int-to-modifiers]]
-            [iroh.util.class :refer [class-name]]))
+            [iroh.pretty.class :refer [class-name]]))
 
 (defn add-annotations [seed obj]
   (if-let [anns (seq (.getDeclaredAnnotations obj))]
@@ -13,7 +13,7 @@
 
 (defn seed [tag obj]
   (let [int-m (.getModifiers obj)
-        modifiers (conj (int-to-modifiers int-m) tag)
+        modifiers (conj (int-to-modifiers int-m tag) tag)
         _ (.setAccessible obj true)]
     (-> {:name (.getName obj)
          :tag  tag
@@ -23,7 +23,7 @@
          :static  (contains? modifiers :static)
          :delegate obj}
         (add-annotations obj))))
-        
+
 (defn prepare-params [ele]
   (let [params (or (:params ele) [])
         params (if (:static ele)

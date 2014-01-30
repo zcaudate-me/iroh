@@ -1,9 +1,10 @@
-(ns iroh.util.class)
+(ns iroh.pretty.class)
 
 (declare simple-name)
 
 (defn array-name [n]
   (condp = n
+    "C" "char"
     "B" "byte"
     "Z" "bool"
     "S" "short"
@@ -30,6 +31,7 @@
        (str "[" (class-string
                  (subs s 0 (- (.length s) 2))true))
        (condp = s
+         "char"   (if arr "C" s)
          "byte"   (if arr "B" s)
          "bool"   (if arr "Z" s)
          "short"  (if arr "S" s)
@@ -41,6 +43,7 @@
 
 (defn class-from-string [s]
   (condp = s
+    "char"   Character/TYPE
     "byte"   Byte/TYPE
     "bool"   Boolean/TYPE
     "short"  Short/TYPE
