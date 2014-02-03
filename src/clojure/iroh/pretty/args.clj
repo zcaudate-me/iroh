@@ -40,7 +40,7 @@
 
 (defn has-name? [name value]
   (cond (regex? name)
-        (re-find name value)
+        (not (nil? (re-find name value)))
 
         (string? name)
         (= name value)))
@@ -56,7 +56,7 @@
   (contains? value modifier))
 
 (defn has-type? [type value]
-  (= type value))
+  (= (create-class type) value))
 
 (defn filter-by [f k grp eles]
   (if-let [chk (get grp k)]
@@ -67,7 +67,7 @@
 
 (defn filter-elements [grp eles]
   (->> eles
-       (filter-by has-name?   :name grp)
-       (filter-by has-params? :params grp)
-       (filter-by has-type?   :type grp)
-     (filter-by has-modifier? :modifiers grp)))
+       (filter-by has-name?     :name grp)
+       (filter-by has-params?   :params grp)
+       (filter-by has-type?     :type grp)
+       (filter-by has-modifier? :modifiers grp)))

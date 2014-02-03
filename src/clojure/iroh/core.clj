@@ -65,8 +65,9 @@
 
   (.* 1)
 
-  (-> (.# Integer :private #"seri")
+  (-> (.?> Integer :private :field :static)
       (get nil))
+
   ((.# Integer :private) (int -1))
 
   (.# Object :private) ;; => lists all the private variables

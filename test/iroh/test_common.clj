@@ -36,7 +36,6 @@
   (select-keys-nested {:a [{:b 1}]} [:a :b])
   => {:a [{:b 1}]})
 
-
 (fact "combinations"
   (combinations 2 [1 2 3])
   => [[2 1] [3 1] [3 2]]

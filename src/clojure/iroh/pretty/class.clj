@@ -39,6 +39,7 @@
          "long"   (if arr "J" s)
          "float"  (if arr "F" s)
          "double" (if arr "D" s)
+         "void" (if arr "V" s)
          (if arr (str "L" s ";") s) ))))
 
 (defn class-from-string [s]
@@ -51,6 +52,7 @@
     "long"   Long/TYPE
     "float"  Float/TYPE
     "double" Double/TYPE
+    "void"   Void/TYPE
     (Class/forName s)))
 
 (defn create-class [s]
