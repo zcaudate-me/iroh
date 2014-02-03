@@ -3,6 +3,8 @@
   (:require [iroh.core :refer :all]))
 
 
-(.? java.lang.Class :method :private)
+(try ((first (.? java.lang.Class :constructor :private)))
+     )
+(>pst)
 
 (.? java.lang.Object :method :private)
