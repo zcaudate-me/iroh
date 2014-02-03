@@ -1,6 +1,12 @@
 (ns iroh.element.common
   (:require [iroh.types.modifiers :refer [int-to-modifiers]]
             [iroh.pretty.class :refer [class-name]]))
+(def override
+  (doto (.getDeclaredField java.lang.reflect.AccessibleObject "override")
+    (.setAccessible true)))
+
+(defn set-accessible [obj flag]
+  (.set override obj flag))
 
 (defn add-annotations [seed obj]
   (if-let [anns (seq (.getDeclaredAnnotations obj))]
@@ -14,7 +20,7 @@
 (defn seed [tag obj]
   (let [int-m (.getModifiers obj)
         modifiers (conj (int-to-modifiers int-m tag) tag)
-        _ (.setAccessible obj true)]
+        _ (set-accessible obj true)]
     (-> {:name (.getName obj)
          :tag  tag
          :hash (.hashCode obj)
