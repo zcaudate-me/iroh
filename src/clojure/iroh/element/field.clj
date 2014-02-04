@@ -37,10 +37,10 @@
 (defmethod format-element :field [ele]
   (let [params (prepare-params ele)]
     (if (:static ele)
-      (format "@(%s :: %s)"
+      (format "#[%s :: %s]"
               (:name ele)
               (class-name (:type ele)))
-      (format "@(%s :: [%s] | %s)"
+      (format "#[%s :: [%s] | %s]"
               (:name ele)
               (clojure.string/join ", " params)
               (class-name (:type ele))))))

@@ -15,15 +15,17 @@
        (.invoke (:delegate ele) v (object-array args)))))
 
 (defmethod to-element java.lang.reflect.Method [obj]
-  (let [body (seed :method obj)]
-    (-> body
-        (assoc :type (.getReturnType obj))
-        (assoc :params (vec (seq (.getParameterTypes obj))))
-        (element))))
+  (let [ele (seed :method obj)
+        ele (if (:static ele)
+               (assoc ele :params (vec (seq (.getParameterTypes obj))))
+               (assoc ele :params (vec (cons (:container ele) (seq (.getParameterTypes obj))))))]
+      (-> ele
+          (assoc :type (.getReturnType obj))
+          (element))))
 
 (defmethod format-element :method [ele]
   (let [params (prepare-params ele)]
-    (format "@(%s :: [%s] -> %s)"
+    (format "#[%s :: [%s] -> %s]"
                       (:name ele)
                       (clojure.string/join ", " params)
                       (class-name (:type ele)))))

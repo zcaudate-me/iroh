@@ -18,7 +18,7 @@
 
 (defmethod format-element :constructor [ele]
   (let [params (prepare-params ele)]
-    (format "@(%s :: [%s] -> %s)"
+    (format "#[%s :: [%s] -> %s]"
                       (:name ele)
                       (clojure.string/join ", " params)
                       (class-name (:type ele)))))

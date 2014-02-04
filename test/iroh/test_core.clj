@@ -4,7 +4,11 @@
 
 
 (try ((first (.? java.lang.Class :constructor :private)))
-     )
-(>pst)
+     (catch Throwable t))
 
-(.? java.lang.Object :method :private)
+((first (.? java.lang.Object :private)))
+
+(:params (first (.? Object)))
+(comment
+  (>pst))
+((.? Integer "parseInt" 2) "2")

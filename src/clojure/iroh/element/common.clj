@@ -31,8 +31,5 @@
         (add-annotations obj))))
 
 (defn prepare-params [ele]
-  (let [params (or (:params ele) [])
-        params (if (:static ele)
-                 params
-                 (concat [(:container ele)] params))]
+  (let [params (or (:params ele) [])]
     (apply list (map class-name params))))

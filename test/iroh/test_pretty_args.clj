@@ -6,7 +6,17 @@
   (group-arguments [:public :static 'int '[int]])
   => {:modifiers [:public :static]
       :type '[Integer/TYPE]
-      :params '[[Integer/TYPE]]})
+      :params '[[Integer/TYPE]]}
+
+  (group-arguments [[Class]])
+  => {:params [[java.lang.Class]]}
+
+  (group-arguments '[Class])
+  => {:type ['Class]}
+
+  (group-arguments [Class])
+  => {:type [java.lang.Class]})
+
 
 (fact "has-name?"
   (has-name? #"get" "getString")

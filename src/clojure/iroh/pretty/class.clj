@@ -6,7 +6,7 @@
   (condp = n
     "C" "char"
     "B" "byte"
-    "Z" "bool"
+    "Z" "boolean"
     "S" "short"
     "I" "int"
     "J" "long"
@@ -31,32 +31,35 @@
        (str "[" (class-string
                  (subs s 0 (- (.length s) 2))true))
        (condp = s
-         "char"   (if arr "C" s)
-         "byte"   (if arr "B" s)
-         "bool"   (if arr "Z" s)
-         "short"  (if arr "S" s)
-         "int"    (if arr "I" s)
-         "long"   (if arr "J" s)
-         "float"  (if arr "F" s)
-         "double" (if arr "D" s)
-         "void" (if arr "V" s)
+         "char"    (if arr "C" s)
+         "byte"    (if arr "B" s)
+         "boolean" (if arr "Z" s)
+         "bool"    (if arr "Z" s)
+         "short"   (if arr "S" s)
+         "int"     (if arr "I" s)
+         "long"    (if arr "J" s)
+         "float"   (if arr "F" s)
+         "double"  (if arr "D" s)
+         "void"    (if arr "V" s)
          (if arr (str "L" s ";") s) ))))
 
 (defn class-from-string [s]
   (condp = s
-    "char"   Character/TYPE
-    "byte"   Byte/TYPE
-    "bool"   Boolean/TYPE
-    "short"  Short/TYPE
-    "int"    Integer/TYPE
-    "long"   Long/TYPE
-    "float"  Float/TYPE
-    "double" Double/TYPE
-    "void"   Void/TYPE
+    "char"    Character/TYPE
+    "byte"    Byte/TYPE
+    "boolean" Boolean/TYPE
+    "bool"    Boolean/TYPE
+    "short"   Short/TYPE
+    "int"     Integer/TYPE
+    "long"    Long/TYPE
+    "float"   Float/TYPE
+    "double"  Double/TYPE
+    "void"    Void/TYPE
     (Class/forName s)))
 
 (defn create-class [s]
   (cond (class? s) s
+
         (string? s)
         (-> s
             (class-string)

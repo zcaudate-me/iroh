@@ -13,6 +13,12 @@
        (assoc m k (f v))
        m)))
 
+(defn update-in-if
+  ([m ks f]
+     (if-let [v (get-in m ks)]
+       (assoc-in m ks (f v))
+       m)))
+
 (defn select-keys-nnil [m]
   (into {}
         (filter (fn [[k v]]
