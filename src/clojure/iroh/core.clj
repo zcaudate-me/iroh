@@ -2,7 +2,7 @@
   (:require [iroh.common :refer :all]
             [iroh.types.element :refer [to-element]]
             [iroh.pretty.args :refer [args-convert args-group]]
-            [iroh.pretty.display :refer [filter-elements display-elements]]
+            [iroh.pretty.display :refer [display]]
             [iroh.element.method]
             [iroh.element.field]
             [iroh.element.constructor]
@@ -18,8 +18,7 @@
                (seq (.getDeclaredConstructors class))
                (seq (.getDeclaredFields class)))
          (map to-element)
-         (filter-elements grp)
-         (display-elements grp))))
+         (display grp))))
 
 (defn dot-star [obj & selectors])
 
@@ -32,59 +31,7 @@
 (defmacro .? [class & selectors]
   `(dot-question ~class ~@(args-convert selectors)))
 
-(defn dot-question> [class & selectors]
-  (let [eles (select-elements class selectors)
-        names (map :name eles)]
-    (if (apply = names)
-      (first eles)
-      (throw (Exception. (str "There are multiple named methods"
-                              (-> names distinct sort)))))))
-
-(defmacro .?> [class & selectors]
-  `(dot-question> ~class ~@selectors))
-
 (defn dot-dollar [obj method & args])
 
 (defmacro .$ [obj method & args]
   `(dot-dollar ~obj ~method ~@args))
-
-(defmacro .$> [obj & forms])
-
-(comment
-
-  (.% Object parseInt)
-
-  (>refresh)
-  (def f (-> (.? Integer :public #"parse")
-             first))
-
-  (Integer/parseInt)
-
-  (f "100")
-
-  (Class/forName "[[[Ljava.lang.Object;")
-
-  (.* 1)
-
-  (-> (.?> Integer :private :field :static)
-      (get nil))
-
-  ((.# Integer :private) (int -1))
-
-  (.# Object :private) ;; => lists all the private variables
-
-  (.# Object :private :static [int String]) ;; => lists all the private static members of return type int String
-
-  (.# Object :private :static :field)
-
-  (.# Object :private :static :method)
-
-  (.# Object :constructor)
-
-  (.# Object "toString")
-
-  (.# Object :private #"get")
-
-  (.# Object :static #"get")
-
-)

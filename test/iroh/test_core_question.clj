@@ -50,7 +50,7 @@
             {:params [String String] :name "indexOf"}
             {:params [String Integer/TYPE] :name "indexOf"}
             {:params [String Integer/TYPE Integer/TYPE] :name "indexOf"}]
-           :in-any-order)
+            :in-any-order)
 
   (.? String "indexOf" :static :name :params)
   => [{:params (map class-convert '["char[]" int int "char[]" int int int])

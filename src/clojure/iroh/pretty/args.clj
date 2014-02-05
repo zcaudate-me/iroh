@@ -5,11 +5,11 @@
 
 (def sort-terms #{:by-name :by-params :by-modifiers :by-type})
 
-(def display-terms #{:name :params :modifiers :type :attributes})
+(def select-terms #{:name :params :modifiers :type :attributes})
 
 (defn args-classify [arg]
   (cond (sort-terms arg)                 :sort-terms
-        (display-terms arg)              :display-terms
+        (select-terms arg)               :select-terms
         (number? arg)                    :num-args
         (or (= :# arg) (= :first arg))   :first
         (keyword? arg)                   :modifiers

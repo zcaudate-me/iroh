@@ -1,6 +1,7 @@
 (ns iroh.test-pretty-display
   (:use midje.sweet)
-  (:require [iroh.pretty.display :refer :all]))
+  (:require [iroh.pretty.display.filter :refer :all]
+            [iroh.pretty.display.sort :refer :all]))
   
 (fact "has-name?"
   (has-name? #"get" "getString")
@@ -38,12 +39,3 @@
 (fact "has-type?"
   (has-type? "java.lang.Object[][]" (Class/forName "[[Ljava.lang.Object;"))
   => true)
-
-(fact "filter-elements"
-  (filter-elements {:modifiers [:static]}
-                   [{:modifiers #{:static}}])
-  => '({:modifiers #{:static}})
-
-  (filter-elements {:modifiers [:public]}
-                   [{:modifiers #{:static}}])
-  => ())
