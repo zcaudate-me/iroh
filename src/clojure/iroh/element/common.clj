@@ -20,6 +20,9 @@
 (defn seed [tag obj]
   (let [int-m (.getModifiers obj)
         modifiers (conj (int-to-modifiers int-m tag) tag)
+        modifiers (if (some #(contains? modifiers %) [:public :private :protected])
+                    modifiers
+                    (conj modifiers :plain))
         _ (set-accessible obj true)]
     (-> {:name (.getName obj)
          :tag  tag

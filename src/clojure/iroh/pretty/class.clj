@@ -1,20 +1,13 @@
-(ns iroh.pretty.class)
+(ns iroh.pretty.class
+  (require [iroh.common :refer :all]))
 
 (declare simple-name)
 
 (defn array-name [n]
-  (condp = n
-    "C" "char"
-    "B" "byte"
-    "Z" "boolean"
-    "S" "short"
-    "I" "int"
-    "J" "long"
-    "F" "float"
-    "D" "double"
-    (if-let [lname (second (re-find #"^L(.*);" n))]
-      (simple-name lname)
-      (simple-name n))))
+  (or (primitive-convert n :raw :string)
+      (if-let [lname (second (re-find #"^L(.*);" n))]
+        (simple-name lname)
+        (simple-name n))))
 
 (defn simple-name [n]
   (if (.startsWith n "[")
@@ -29,36 +22,22 @@
   ([s arr]
      (if (.endsWith s "[]")
        (str "[" (class-string
-                 (subs s 0 (- (.length s) 2))true))
-       (condp = s
-         "char"    (if arr "C" s)
-         "byte"    (if arr "B" s)
-         "boolean" (if arr "Z" s)
-         "bool"    (if arr "Z" s)
-         "short"   (if arr "S" s)
-         "int"     (if arr "I" s)
-         "long"    (if arr "J" s)
-         "float"   (if arr "F" s)
-         "double"  (if arr "D" s)
-         "void"    (if arr "V" s)
-         (if arr (str "L" s ";") s) ))))
+                 (subs s 0 (- (.length s) 2)) true))
+       (if arr
+         (or (primitive-convert s :string :raw)
+             (str "L" s ";"))
+         s))))
 
 (defn class-from-string [s]
-  (condp = s
-    "char"    Character/TYPE
-    "byte"    Byte/TYPE
-    "boolean" Boolean/TYPE
-    "bool"    Boolean/TYPE
-    "short"   Short/TYPE
-    "int"     Integer/TYPE
-    "long"    Long/TYPE
-    "float"   Float/TYPE
-    "double"  Double/TYPE
-    "void"    Void/TYPE
-    (Class/forName s)))
+  (or (primitive-convert s :string :type)
+      (Class/forName s)))
 
 (defn create-class [s]
   (cond (class? s) s
+
+        (symbol? s)
+        (or (primitive-convert s :symbol :type)
+            (eval s))
 
         (string? s)
         (-> s
