@@ -9,6 +9,8 @@
     (or (primitive-convert raw :string :raw)
         raw)))
 
+(declare raw->string)
+
 (defn raw-array->string [v]
   (if-let [obj-name (second (re-find #"^L(.*);" v))]
     (raw->string obj-name)
