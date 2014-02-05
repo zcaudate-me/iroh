@@ -5,6 +5,8 @@
 
 (defmulti to-element (fn [obj] (type obj)))
 
+(defmulti format-element (fn [ele] (:tag ele)))
+
 (defn make-invoke-element-form [args]
   (clojure.walk/postwalk
    (fn [x]
@@ -21,6 +23,10 @@
 (defmacro init-element-type [n]
   (concat
    '(deftype Element [body]
+      java.lang.Object
+      (toString [ele]
+        (format-element ele))
+     
       clojure.lang.ILookup
       (valAt [ele k]
         (if k (get body k) body))
@@ -36,7 +42,5 @@
 (defn element [body]
   (Element. body))
 
-(defmulti format-element (fn [ele] (:tag ele)))
-
 (defmethod print-method Element [v w]
-  (.write w (format-element v)))
+  (.write w (str v)))

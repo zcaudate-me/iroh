@@ -6,8 +6,8 @@
 (def ele (to-element (.getDeclaredField java.lang.Integer "TYPE")))
 
 (fact "to-element"
-  (with-out-str (print-method ele *out*))
-  => "@(TYPE :: java.lang.Class)"
+  (str ele)
+  => "#[TYPE :: java.lang.Class]"
 
   (invoke-element ele)
   => Integer/TYPE

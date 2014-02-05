@@ -1,16 +1,18 @@
 (ns iroh.core
   (:require [iroh.common :refer :all]
             [iroh.types.element :refer [to-element]]
-            [iroh.pretty.args :refer [convert-arguments group-arguments filter-elements display-elements]]
+            [iroh.pretty.args :refer [args-convert args-group]]
+            [iroh.pretty.display :refer [filter-elements display-elements]]
             [iroh.element.method]
             [iroh.element.field]
-            [iroh.element.constructor]))
+            [iroh.element.constructor]
+            ))
 
 (def ^:dynamic *static-description* (atom {}))
 (def ^:dynamic *instance-description* (atom {}))
 
 (defn select-elements [class selectors]
-  (let [grp (group-arguments selectors)]
+  (let [grp (args-group selectors)]
     (->> (concat
                (seq (.getDeclaredMethods class))
                (seq (.getDeclaredConstructors class))
@@ -28,7 +30,7 @@
   (select-elements class selectors))
 
 (defmacro .? [class & selectors]
-  `(dot-question ~class ~@(convert-arguments selectors)))
+  `(dot-question ~class ~@(args-convert selectors)))
 
 (defn dot-question> [class & selectors]
   (let [eles (select-elements class selectors)

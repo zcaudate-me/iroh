@@ -6,7 +6,7 @@
   (primitive-convert "Z" :symbol)
   => 'boolean
 
-  (primitive-convert "Z" :type)
+  (primitive-convert "Z" :class)
   => Boolean/TYPE
 
   (primitive-convert "Z" :string)
@@ -20,7 +20,7 @@
   (primitive-convert "void" :symbol)
   => 'void
 
-  (primitive-convert "void" :type)
+  (primitive-convert "void" :class)
   => Void/TYPE
 
   (primitive-convert "void" :string)

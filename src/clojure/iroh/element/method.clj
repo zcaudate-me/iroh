@@ -1,8 +1,8 @@
 (ns iroh.element.method
   (:require [iroh.types.element :refer [element invoke-element
                                         to-element format-element]]
-            [iroh.element.common :refer [seed prepare-params]]
-            [iroh.pretty.class :refer [class-name]]))
+            [iroh.element.common :refer [seed]]
+            [iroh.pretty.classes :refer [class-convert]]))
 
 (defmethod invoke-element :method
   ([ele]
@@ -23,17 +23,12 @@
           (assoc :type (.getReturnType obj))
           (element))))
 
-(defmethod format-element :method [ele]
-  (let [params (prepare-params ele)]
-    (format "#[%s :: [%s] -> %s]"
+(defn format-element-method [ele]
+  (let [params (map #(class-convert % :string) (:params ele))]
+    (format "#[%s :: (%s) -> %s]"
                       (:name ele)
                       (clojure.string/join ", " params)
-                      (class-name (:type ele)))))
+                      (class-convert (:type ele) :string))))
 
-(comment
-  (get (to-element (first (seq (.getDeclaredMethods java.lang.Object))))
-       nil)
-
-  (map to-element
-       (seq (.getDeclaredMethods java.lang.Object)))
-)
+(defmethod format-element :method [ele]
+  (format-element-method ele))

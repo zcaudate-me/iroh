@@ -2,7 +2,7 @@
   (require [iroh.common :refer :all]
            [iroh.pretty.primitives :refer [primitive-convert]]))
 
-(def class-reps #{:raw :symbol :string :type})
+(def class-reps #{:raw :symbol :string :class})
 
 (defn type->raw [v]
   (let [raw (.getName v)]
@@ -37,30 +37,38 @@
   (or (primitive-convert v :string :raw)
       (string-array->raw v)))
 
-(defmulti class-convert (fn [v to] (type v)))
+(defmulti class-convert-impl (fn [v to] (type v)))
 
-(defmethod class-convert Class
+(defn class-convert
+  ([v] (class-convert v :class))
+  ([v to] (class-convert-impl v to)))
+
+(defmethod class-convert-impl :default
+  [v to])
+
+(defmethod class-convert-impl Class
   [v to]
   (condp = to
-    :type v
+    :class v
     :symbol (class-convert (.getName v) to)
     :raw (type->raw v)
     :string (raw->string (type->raw v))))
 
-(defmethod class-convert clojure.lang.Symbol
+(defmethod class-convert-impl clojure.lang.Symbol
   [v to]
   (condp = to
-    :type (eval v)
+    :class (or (primitive-convert v :symbol :class)
+               (eval v))
     :symbol v
     :raw (string->raw (name v))
     :string (raw->string (name v))))
 
-(defmethod class-convert String
+(defmethod class-convert-impl String
   [v to]
   (condp = to
-    :type (or (primitive-convert v :raw :type)
-              (primitive-convert v :string :type)
-              (Class/forName (string->raw v)))
+    :class (or (primitive-convert v :raw :class)
+               (primitive-convert v :string :class)
+               (Class/forName (string->raw v)))
     :symbol (or (primitive-convert v :raw :symbol)
                 (primitive-convert v :string :symbol)
                 (symbol (string->raw v)))

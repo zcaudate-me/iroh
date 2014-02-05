@@ -50,10 +50,10 @@
 
 
 (fact "class-convert"
-  (class-convert "[C" :type)
+  (class-convert "[C" :class)
   =>(Class/forName "[C")
 
-  (class-convert "char[][]" :type)
+  (class-convert "char[][]" :class)
   => (Class/forName "[[C")
 
   (class-convert "char[][]" :symbol)
@@ -62,5 +62,5 @@
   (class-convert "java.lang.Object[][]" :symbol)
   => (symbol "[[Ljava.lang.Object;")
 
-  (class-convert "java.lang.Object[][]" :type)
+  (class-convert "java.lang.Object[][]" :class)
   => (Class/forName "[[Ljava.lang.Object;"))

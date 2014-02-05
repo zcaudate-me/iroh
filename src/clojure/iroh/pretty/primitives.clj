@@ -1,17 +1,17 @@
 (ns iroh.pretty.primitives
   (:require [iroh.common :refer :all]))
 
-(def primitive-reps #{:raw :symbol :string :type})
+(def primitive-reps #{:raw :symbol :string :class})
 
 (def primitive-records
-  [{:raw "Z" :symbol 'boolean :string "boolean" :type Boolean/TYPE}
-   {:raw "B" :symbol 'byte    :string "byte"    :type Byte/TYPE}
-   {:raw "C" :symbol 'char    :string "char"    :type Character/TYPE}
-   {:raw "I" :symbol 'int     :string "int"     :type Integer/TYPE}
-   {:raw "J" :symbol 'long    :string "long"    :type Long/TYPE}
-   {:raw "F" :symbol 'float   :string "float"   :type Float/TYPE}
-   {:raw "D" :symbol 'double  :string "double"  :type Double/TYPE}
-   {:raw "V" :symbol 'void    :string "void"    :type Void/TYPE}])
+  [{:raw "Z" :symbol 'boolean :string "boolean" :class Boolean/TYPE}
+   {:raw "B" :symbol 'byte    :string "byte"    :class Byte/TYPE}
+   {:raw "C" :symbol 'char    :string "char"    :class Character/TYPE}
+   {:raw "I" :symbol 'int     :string "int"     :class Integer/TYPE}
+   {:raw "J" :symbol 'long    :string "long"    :class Long/TYPE}
+   {:raw "F" :symbol 'float   :string "float"   :class Float/TYPE}
+   {:raw "D" :symbol 'double  :string "double"  :class Double/TYPE}
+   {:raw "V" :symbol 'void    :string "void"    :class Void/TYPE}])
 
 (def primitive-combinations
   (let [combs (combinations 2 primitive-reps)]

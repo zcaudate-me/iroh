@@ -1,7 +1,7 @@
-(ns iroh.test-core
+(ns iroh.test-core-question
   (:use midje.sweet)
   (:require [iroh.core :refer :all]
-            [iroh.pretty.class :refer [create-class]]))
+            [iroh.pretty.classes :refer [class-convert]] :reload))
 
 (fact ".? field"
   (.? String :field :name)
@@ -37,26 +37,27 @@
 
 (fact ".? indexOf"
   (.? String :method :plain :name :params)
-  => [{:params (map create-class [String "char[]" "int"]), :name "getChars"}
-      {:params (map create-class [String]), :name "hash32"}
-      {:params (map create-class '["char[]" int int "char[]" int int int])
+  => [{:params (map class-convert [String "char[]" "int"]), :name "getChars"}
+      {:params (map class-convert [String]), :name "hash32"}
+      {:params (map class-convert '["char[]" int int "char[]" int int int])
        :name "indexOf"}
-      {:params (map create-class '["char[]" int int "char[]" int int int]),
+      {:params (map class-convert '["char[]" int int "char[]" int int int]),
        :name "lastIndexOf"}]
 
   (.? String :method :name :params "indexOf")
-  => [{:params (map create-class '["char[]" int int "char[]" int int int]) :name "indexOf"}
-      {:params [String String Integer/TYPE] :name "indexOf"}
-      {:params [String String] :name "indexOf"}
-      {:params [String Integer/TYPE] :name "indexOf"}
-      {:params [String Integer/TYPE Integer/TYPE] :name "indexOf"}]
+  => (just [{:params (map class-convert '["char[]" int int "char[]" int int int]) :name "indexOf"}
+            {:params [String String Integer/TYPE] :name "indexOf"}
+            {:params [String String] :name "indexOf"}
+            {:params [String Integer/TYPE] :name "indexOf"}
+            {:params [String Integer/TYPE Integer/TYPE] :name "indexOf"}]
+           :in-any-order)
 
   (.? String "indexOf" :static :name :params)
-  => [{:params (map create-class '["char[]" int int "char[]" int int int])
+  => [{:params (map class-convert '["char[]" int int "char[]" int int int])
        :name "indexOf"}]
 
   (.? String "indexOf" :static :name :params :#)
-  => {:params (map create-class '["char[]" int int "char[]" int int int])
+  => {:params (map class-convert '["char[]" int int "char[]" int int int])
       :name "indexOf"}
 
   (.? String "indexOf" :static :name :params :#)
@@ -82,9 +83,6 @@
 
   ((.? clojure.lang.ILookup 3 :#) {:x :1} :y :NAN)
   => :NAN)
-
-
-
 
 (comment
   (>pst)

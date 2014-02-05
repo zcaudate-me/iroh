@@ -1,27 +1,7 @@
 (ns iroh.pretty.display
   (:require [iroh.common :refer :all]
-            [iroh.pretty.args :refer [convert-arguments]]
-            [iroh.pretty.class :refer [create-class]]))
-
-(def sort-terms #{:by-name :by-params :by-modifiers :by-type})
-
-(def display-terms #{:name :params :modifiers :type :attributes})
-
-(defn classify-argument [arg]
-  (cond (sort-terms arg)                 :sort-terms
-        (display-terms arg)              :display-terms
-        (number? arg)                    :num-args
-        (or (= :# arg) (= :first arg))   :first
-        (keyword? arg)                   :modifiers
-        (or (string? arg) (regex? arg))  :name
-        (or (set? arg) (vector? arg))    :params
-        (hash-map? arg)                  :attributes
-        (or (class? arg) (symbol? arg))  :type))
-
-(defn group-arguments [args]
-  (-> (group-by classify-argument args)
-      (update-in-if [:params] convert-arguments)
-      (update-in-if [:type] convert-arguments)))
+            [iroh.pretty.args :refer [args-convert]]
+            [iroh.pretty.classes :refer [class-convert]]))
 
 (defn has-name? [name value]
   (cond (regex? name)
@@ -32,16 +12,16 @@
 
 (defn has-params? [params value]
   (cond (set? params)
-        (every? (set (map create-class params)) value)
+        (every? (set (map class-convert params)) value)
 
         (vector? params)
-        (= (mapv create-class params) value)))
+        (= (mapv class-convert params) value)))
 
 (defn has-modifier? [modifier value]
   (contains? value modifier))
 
 (defn has-type? [type value]
-  (= (create-class type) value))
+  (= (class-convert type) value))
 
 (defn has-num-args? [num-args value]
   (= num-args (count value)))
@@ -90,14 +70,3 @@
     (first-fn grp)
     (display-terms-fn grp)
     (sort-terms-fn grp)) eles))
-
-((comp inc #(* 2 %)) 1)
-
-#_(let [dterms (sort (:display-terms grp))
-        sterms (:sort-terms grp)
-        get-first (:first grp)]
-    (condp = (count dterms)
-      0 (sort (sort-fn :name) eles)
-      1 (distinct (sort (sort-fn str) (map (first dterms) eles)))
-      (map #(select-keys (get % nil) dterms) eles))
-    eles)

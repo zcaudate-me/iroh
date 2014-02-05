@@ -44,13 +44,3 @@
             :modifiers #{:static :public :final :field}
             :static true
             :delegate #(instance? java.lang.reflect.Field %)}))
-
-
-(fact "prepare-params"
-  (prepare-params {:params [Integer/TYPE]
-                   :static true})
-  => '("int")
-
-  (prepare-params {:params [(Class/forName "[[B")]
-                   :container Object})
-  => '("java.lang.Object" "byte[][]"))

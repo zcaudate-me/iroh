@@ -1,6 +1,7 @@
 (ns iroh.element.common
   (:require [iroh.types.modifiers :refer [int-to-modifiers]]
-            [iroh.pretty.class :refer [class-name]]))
+            [iroh.pretty.classes :refer [class-convert]]))
+
 (def override
   (doto (.getDeclaredField java.lang.reflect.AccessibleObject "override")
     (.setAccessible true)))
@@ -32,7 +33,3 @@
          :static  (contains? modifiers :static)
          :delegate obj}
         (add-annotations obj))))
-
-(defn prepare-params [ele]
-  (let [params (or (:params ele) [])]
-    (apply list (map class-name params))))
