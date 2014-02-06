@@ -1,13 +1,7 @@
 (ns iroh.test-java-util
   (:use midje.sweet)
+  (:require [iroh.common :refer [class-array]])
   (:import im.chit.iroh.Util))
-
-(defn class-array [type seq]
-  (let [total (count seq)
-        arr (make-array type total)]
-    (doseq [i (range total)]
-      (aset arr i (nth seq i)))
-    arr))
 
 (fact "boxArg"
   (Util/boxArg Float/TYPE 2)

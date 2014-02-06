@@ -1,10 +1,21 @@
-(ns iroh.common)
+(ns iroh.common
+  (:import im.chit.iroh.Util))
 
 (defn hash-map? [x]
   (instance? clojure.lang.APersistentMap x))
 
 (defn regex? [x]
   (instance? java.util.regex.Pattern x))
+
+(defn class-array [type seq]
+  (let [total (count seq)
+        arr (make-array type total)]
+    (doseq [i (range total)]
+      (aset arr i (nth seq i)))
+    arr))
+
+(defn box-args [obj arr]
+  (Util/boxArgs (.getParameterTypes obj) arr))
 
 (defn assoc-if
   ([m k v] (assoc-if m k v identity))

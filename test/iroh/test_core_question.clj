@@ -84,6 +84,9 @@
   ((.? clojure.lang.ILookup 3 :#) {:x :1} :y :NAN)
   => :NAN)
 
+(fact ".? Math"
+  (.? java.lang.Math))
+
 (comment
   (>pst)
   (:params (first (.? Object)))
