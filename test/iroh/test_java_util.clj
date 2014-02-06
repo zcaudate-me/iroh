@@ -18,7 +18,7 @@
                      (object-array [1.0 2.0])))
   => '(1 2.0))
 
-(fact "paramArgTypeMatch"
+(fact "paramArgTypeMatch basics"
   (.isPrimitive Integer/TYPE)
   => true
 
@@ -33,3 +33,35 @@
 
   (.isAssignableFrom clojure.lang.PersistentHashMap java.util.Map)
   => false)
+
+(fact "paramArgTypeMatch"
+  (Util/paramArgTypeMatch Double/TYPE Float/TYPE)
+  => true
+
+  (Util/paramArgTypeMatch Float/TYPE Double/TYPE)
+  => true
+
+  (Util/paramArgTypeMatch Integer/TYPE Float/TYPE)
+  => false
+
+  (Util/paramArgTypeMatch Byte/TYPE Long/TYPE)
+  => false
+
+  (Util/paramArgTypeMatch Long/TYPE Byte/TYPE)
+  => true
+
+  (Util/paramArgTypeMatch Long/TYPE Long)
+  => true
+
+  (Util/paramArgTypeMatch Long Byte)
+  => false
+
+  (Util/paramArgTypeMatch clojure.lang.PersistentHashMap java.util.Map)
+  => false
+
+  (Util/paramArgTypeMatch java.util.Map clojure.lang.PersistentHashMap)
+  => true)
+
+
+(fact "isCongruent"
+  ())
