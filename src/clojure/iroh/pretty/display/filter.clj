@@ -33,7 +33,7 @@
   (= (class-convert type) value))
 
 (defn has-origins? [origins value]
-  (if (some #(origins %) value)
+  (if (origins (last value))
     true false))
 
 (defn filter-by

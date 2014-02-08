@@ -61,27 +61,6 @@
               (clojure.core/ns ~home)
               vars#)))))
 
-(comment
-  (def a (.? Object "wait" :#))
-  (ns iroh.core)
-  (macroexpand-1 '(def.extract hello Object))
-  (def.extract hello Object)
-  (>refresh))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 (defn all-instance-elements
   [tcls icls current]
   (let [supers (inheritance-list tcls)
@@ -100,7 +79,6 @@
 
 (defmacro .* [obj & selectors]
   `(list-instance-elements ~obj ~(args-convert selectors)))
-
 
 (defn instance-lookup-path [ele]
   (let [base [(:name ele)
@@ -138,11 +116,6 @@
                   )))
             {} ks)))
 
-(defn map-to-method [])
-
-(defn lookup-to-elements [lu]
-  ())
-
 (comment
   (>pst)
   (keys (object-lookup (test.A.)))
@@ -155,8 +128,8 @@
         (:fields)))
 
   (def a 1)
-  ((.* a :private :#) a 2)
-    ((.* a :private :#) [:return Integer] [:any ])
+  ((.* a :private :#) a)
+  ((.* a #{Number} "shortValue"))
   ((.? Integer  2 #(= "parseInt" (:name %))) "14" 10)
   ((.? String "toCharArray" :#) "Oeuoeu")
 

@@ -68,8 +68,9 @@
 
 (defmethod format-element :field [ele]
   (if (:static ele)
-    (format "#[%s :: %s]"
+    (format "#[%s :: <%s> | %s]"
             (:name ele)
+            (.getName (:container ele))
             (class-convert (:type ele) :string))
     (format "#[%s :: (%s) | %s]"
             (:name ele)
@@ -79,6 +80,12 @@
 (defmethod element-params :field [ele]
   [(mapv #(symbol (class-convert % :string)) (arg-params ele :get))
    (mapv #(symbol (class-convert % :string)) (arg-params ele :set))])
+
+
+
+
+
+
 
 
 
