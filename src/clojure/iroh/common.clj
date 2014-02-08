@@ -14,9 +14,6 @@
       (aset arr i (nth seq i)))
     arr))
 
-(defn box-args [obj arr]
-  (Util/boxArgs (.getParameterTypes obj) arr))
-
 (defn assoc-if
   ([m k v] (assoc-if m k v identity))
   ([m k v f]

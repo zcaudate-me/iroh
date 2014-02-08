@@ -17,7 +17,13 @@
   (round (byte 4.0)) => 4
 
   (round \a)
-  => (throws IllegalArgumentException)
+  => (throws Exception "Method `round` expects params to be of type [float], but was invoked with [java.lang.Character] instead")
 
   (round true)
-  => (throws IllegalArgumentException))
+  => (throws Exception "Method `round` expects params to be of type [float], but was invoked with [java.lang.Boolean] instead"))
+
+
+#_(def
+  (->> (class-array Class [Float/TYPE])
+       (.getDeclaredMethod Math "round")
+       (to-element)))

@@ -24,6 +24,10 @@
         modifiers (if (some #(contains? modifiers %) [:public :private :protected])
                     modifiers
                     (conj modifiers :plain))
+        modifiers (if (or (contains? modifiers :static)
+                          (= tag :constructor))
+                    modifiers
+                    (conj modifiers :instance))
         _ (set-accessible obj true)]
     (-> {:name (.getName obj)
          :tag  tag

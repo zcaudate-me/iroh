@@ -2,7 +2,7 @@
   (:use midje.sweet)
   (:require [iroh.pretty.display.filter :refer :all]
             [iroh.pretty.display.sort :refer :all]))
-  
+
 (fact "has-name?"
   (has-name? #"get" "getString")
   => true
@@ -24,12 +24,23 @@
   => true
 
   (has-params? ["[J"] [(Class/forName "[J")])
+  => true)
+
+(fact "has-any-params?"
+  (has-any-params? [:any 'int String] [])
+  => false
+
+  (has-any-params? [:any 'int String] [Integer/TYPE])
   => true
 
-  (has-params? #{Integer/TYPE String} [Integer/TYPE])
-  => true
+  (has-any-params? [:any Integer/TYPE String] [String Integer/TYPE])
+  => true)
 
-  (has-params? #{Integer/TYPE String} [String Integer/TYPE])
+(fact "has-all-params?"
+  (has-all-params? [:all Integer/TYPE String] [Integer/TYPE])
+  => false
+
+  (has-all-params? [:all Integer/TYPE String] [String Integer/TYPE])
   => true)
 
 (fact "has-modifier?"

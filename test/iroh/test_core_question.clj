@@ -1,6 +1,7 @@
 (ns iroh.test-core-question
   (:use midje.sweet)
   (:require [iroh.core :refer :all]
+            [iroh.types.element :refer :all]
             [iroh.pretty.classes :refer [class-convert]] :reload))
 
 (fact ".? field"
@@ -60,7 +61,7 @@
   => {:params (map class-convert '["char[]" int int "char[]" int int int])
       :name "indexOf"}
 
-  (.? String "indexOf" :static :name :params :#)
+  (.? String "indexOf" :static :# :name :params)
   => (.? String "indexOf" :static :name :params :first))
 
 
@@ -85,7 +86,56 @@
   => :NAN)
 
 (fact ".? Math"
-  (.? java.lang.Math))
+  (>= (-> (.? java.lang.Math) count)
+      (-> (.? java.lang.Math [:any 'double]) count)
+      (-> (.? java.lang.Math ['double]) count))
+  => true)
+
+;;(meta #'to-boolean)
+(comment
+  ((.* java.lang.Boolean "toBoolean" :#) "true")
+
+  (def to-boolean (.* java.lang.Boolean "toBoolean" :#))
+
+  (get (ns-publics *ns*) (symbol "to-boolean"))
+
+
+
+  (element-meta to-boolean)
+  (def to-bool (.* Boolean "toBoolean" :#))
+
+  (def to-bool (.? Object "toString"))
+
+
+  (defmacro def.extract
+    )
+
+  (def.import
+    to-boolean [Boolean toBoolean]
+    to-string  [Object  toString])
+
+  (def.extract Object test.object)
+
+  (to-stri)
+
+  (defn add "oeuoeu "([a m]))
+  (meta #'add)
+  (def.import to-boolean [Boolean toBoolean])
+  (def.n to-string  [Object hashCode])
+  (def.n to-string  [Long serialVersionUID])
+
+
+
+  (meta #'to-boolean)
+  (to-boole)
+  (defnjava to-boolean [Boolean toBoolean])
+  (>refresh)
+
+  (to-boolean "true")
+
+  (Boolean/toBoolean "true")
+  :origins)
+
 
 (comment
   (>pst)

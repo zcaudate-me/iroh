@@ -7,6 +7,13 @@
 (defn abstract? [class]
   (java.lang.reflect.Modifier/isAbstract (.getModifiers class)))
 
+(defn inheritance-list
+  ([cls] (inheritance-list cls ()))
+  ([cls output]
+     (if (nil? cls)
+       output
+       (recur (.getSuperclass cls) (cons cls output)))))
+
 (defn base-list
   ([cls] (base-list cls []))
   ([cls output]

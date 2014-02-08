@@ -10,23 +10,33 @@
 (defn args-classify [arg]
   (cond (sort-terms arg)                 :sort-terms
         (select-terms arg)               :select-terms
-        (number? arg)                    :num-args
-        (or (= :# arg) (= :first arg))   :first
-        (keyword? arg)                   :modifiers
+        (= :first arg)                   :first
+        (or (= :# arg) (= :merge arg))   :merge
+
         (or (string? arg) (regex? arg))  :name
-        (or (set? arg) (vector? arg))    :params
-        (hash-map? arg)                  :attributes
-        (or (class? arg) (symbol? arg))  :type))
+        (fn? arg)                        :predicate
+        (set? arg)                       :origins
+        (and (vector? arg)
+             (= :any (first arg)))       :any-params
+        (and (vector? arg)
+             (= :all (first arg)))       :all-params
+        (number? arg)                    :num-params
+        (vector? arg)                    :params
+
+        (or (class? arg) (symbol? arg))  :type
+
+        (keyword? arg)                   :modifiers
+        (hash-map? arg)                  :attribute))
 
 (defn args-convert [args]
   (let [single-fn #(or (class-convert %) %)]
   (mapv (fn [v]
           (cond (vector? v)
                 (mapv single-fn v)
-                      
+
                 (set? v)
                 (set (map single-fn v))
-                          
+
                 (symbol? v)
                 (or (primitive-convert v :symbol :class)
                     v)

@@ -13,7 +13,10 @@
   => "boolean"
 
   (primitive-convert "Z" :raw)
-  => nil)
+  => nil
+
+  (primitive-convert "Z" :container)
+  => java.lang.Boolean)
 
 
 (fact "primitive-convert"
@@ -27,4 +30,7 @@
   => nil
 
   (primitive-convert "void" :raw)
-  => "V")
+  => "V"
+
+  (primitive-convert "void" :container)
+  => Void)

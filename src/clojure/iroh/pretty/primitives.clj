@@ -1,17 +1,21 @@
 (ns iroh.pretty.primitives
   (:require [iroh.common :refer :all]))
 
-(def primitive-reps #{:raw :symbol :string :class})
+(def primitive-reps #{:raw :symbol :string :class :container})
 
 (def primitive-records
-  [{:raw "Z" :symbol 'boolean :string "boolean" :class Boolean/TYPE}
-   {:raw "B" :symbol 'byte    :string "byte"    :class Byte/TYPE}
-   {:raw "C" :symbol 'char    :string "char"    :class Character/TYPE}
-   {:raw "I" :symbol 'int     :string "int"     :class Integer/TYPE}
-   {:raw "J" :symbol 'long    :string "long"    :class Long/TYPE}
-   {:raw "F" :symbol 'float   :string "float"   :class Float/TYPE}
-   {:raw "D" :symbol 'double  :string "double"  :class Double/TYPE}
-   {:raw "V" :symbol 'void    :string "void"    :class Void/TYPE}])
+  [{:raw "Z" :symbol 'boolean :string "boolean" :class Boolean/TYPE   :container Boolean}
+   {:raw "B" :symbol 'byte    :string "byte"    :class Byte/TYPE      :container Byte}
+   {:raw "C" :symbol 'char    :string "char"    :class Character/TYPE :container Character}
+   {:raw "I" :symbol 'int     :string "int"     :class Integer/TYPE   :container Integer}
+   {:raw "J" :symbol 'long    :string "long"    :class Long/TYPE      :container Long}
+   {:raw "F" :symbol 'float   :string "float"   :class Float/TYPE     :container Float}
+   {:raw "D" :symbol 'double  :string "double"  :class Double/TYPE    :container Double}
+   {:raw "V" :symbol 'void    :string "void"    :class Void/TYPE      :container Void}])
+
+(def primitive-classes (set (map :class primitive-records)))
+
+(def primitive-containers (set (map :container primitive-records)))
 
 (def primitive-combinations
   (let [combs (combinations 2 primitive-reps)]
@@ -28,7 +32,7 @@
   ([v to]
      (loop [[k & more] (seq (disj primitive-reps to))]
        (if-not (nil? k)
-           (or (primitive-convert v k to)
-               (recur more)))))
+         (or (primitive-convert v k to)
+             (recur more)))))
   ([v from to]
      (get-in primitive-lu [from to v])))

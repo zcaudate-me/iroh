@@ -1,8 +1,8 @@
 (ns iroh.element.field
-  (:require [iroh.types.element :refer [element invoke-element
-                                        to-element format-element]]
+  (:require [iroh.types.element :refer :all]
             [iroh.element.common :refer [seed]]
-            [iroh.pretty.classes :refer [class-convert]]))
+            [iroh.pretty.classes :refer [class-convert]])
+  (:import im.chit.iroh.Util))
 
 (def patch-field
   (let [mf (.getDeclaredField java.lang.reflect.Field  "modifiers")]
@@ -11,36 +11,102 @@
       (.setInt mf field (bit-and (.getModifiers field) (bit-not java.lang.reflect.Modifier/FINAL)))
       field)))
 
+(defn arg-params [ele access]
+  (let [args (if (:static ele)
+               [Class] [(:container ele)])]
+    (condp = access
+      :set (conj args (:type ele))
+      :get args)))
+
+(defmacro throw-arg-exception [ele args]
+  `(throw (Exception. (format  "Accessor `%s` expects %s for getter or %s for setter, but was invoked with %s."
+                              (str (:name ~ele))
+                              (arg-params ~ele :get)
+                              (arg-params ~ele :set)
+                              (mapv #(symbol (class-convert
+                                              (class %) :string))
+                                    ~args)))))
+
+(defn invoke-static-field
+  ([ele cls]
+     (.get (:delegate ele) nil))
+  ([ele cls val]
+     (Util/setField (:delegate ele) nil val)
+     true))
+
+(defn invoke-instance-field
+  ([ele obj]
+     (.get (:delegate ele) (Util/boxArg (:container ele) obj)))
+  ([ele obj val]
+     (Util/setField (:delegate ele) (Util/boxArg (:container ele) obj) val)
+     true))
+
 (defmethod invoke-element :field
   ([ele]
-     (if (:static ele)
-       (.get (:delegate ele) [nil])
-       (throw (Exception. "Cannot invoke field element with no parameters"))))
+     (throw-arg-exception ele []))
   ([ele x]
      (if (:static ele)
-       (do (.set (:delegate ele) nil x) ele)
-       (.get (:delegate ele) x)))
+       (invoke-static-field ele x)
+       (invoke-instance-field ele x)))
 
   ([ele x y]
      (if (:static ele)
-       (throw (Exception. "Cannot invoke static field element with two parameters"))
-       (do (.set (:delegate ele) x y)
-           x))))
+       (invoke-static-field ele x y)
+       (invoke-instance-field ele x y)))
+  ([ele x y & more]
+     (throw-arg-exception ele (vec (concat [x y] more)))))
 
 (defmethod to-element java.lang.reflect.Field [obj]
-  (let [body (seed :field obj)]
+  (let [body (seed :field obj)
+        type (.getType obj)]
     (-> body
-        (assoc :type (.getType obj))
+        (assoc :type type)
+        (assoc :origins (list (:container body)))
+        (assoc :params (if (:static body) [] [(:container body)]))
         (assoc :delegate (patch-field obj))
         (element))))
 
 (defmethod format-element :field [ele]
-  (let [params (map #(class-convert % :string) (:params ele))]
-    (if (:static ele)
-      (format "#[%s :: %s]"
-              (:name ele)
-              (class-convert (:type ele) :string))
-      (format "#[%s :: [%s] | %s]"
-              (:name ele)
-              (clojure.string/join ", " params)
-              (class-convert (:type ele) :string)))))
+  (if (:static ele)
+    (format "#[%s :: %s]"
+            (:name ele)
+            (class-convert (:type ele) :string))
+    (format "#[%s :: (%s) | %s]"
+            (:name ele)
+            (.getName (:container ele))
+            (class-convert (:type ele) :string))))
+
+(defmethod element-params :field [ele]
+  [(mapv #(symbol (class-convert % :string)) (arg-params ele :get))
+   (mapv #(symbol (class-convert % :string)) (arg-params ele :set))])
+
+
+
+;;(element-meta (to-element (.getDeclaredField A "finalA")))
+;;((.? java.util.Date :field :static #"serial" :#) 123123)
+;;((to-element (.getDeclaredField java.util.Date "serialVersionUID")) 10)
+
+;;(>reimport '[test A B])
+(comment
+  (import 'test.A 'test.B)
+  (def a (A.))
+  (def b (B.))
+  ;;(.finalA b)
+
+  (.get (:delegate (to-element (.getDeclaredField A "finalA"))) a)
+  (.get (:delegate (to-element (.getDeclaredField A "finalA"))) b)
+
+  ;;(.toString a)
+  ;;((to-element (.getDeclaredField A "finalA")) a) ",.p,.p,.p,.p"
+
+  (comment
+    (use 'iroh.core)
+    (>pst)
+    (>refresh)
+    (.* b)
+    ((.? Object "new" :#))
+    ((.? Long :field #"MAX" :#) 1)
+    (.isInstance Number 1)
+    (.getClass 1)
+    )
+)

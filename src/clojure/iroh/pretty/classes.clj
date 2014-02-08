@@ -1,8 +1,8 @@
 (ns iroh.pretty.classes
   (require [iroh.common :refer :all]
-           [iroh.pretty.primitives :refer [primitive-convert]]))
+           [iroh.pretty.primitives :refer :all]))
 
-(def class-reps #{:raw :symbol :string :class})
+(def class-reps #{:raw :symbol :string :class :container})
 
 (defn type->raw [v]
   (let [raw (.getName v)]
@@ -49,7 +49,12 @@
 (defmethod class-convert-impl Class
   [v to]
   (condp = to
-    :class v
+    :container (if (primitive-classes v)
+                 (primitive-convert v :class :container)
+                 v)
+    :class    (if (primitive-containers v)
+                (primitive-convert v :container :class)
+                v)
     :symbol (class-convert (.getName v) to)
     :raw (type->raw v)
     :string (raw->string (type->raw v))))
@@ -57,6 +62,8 @@
 (defmethod class-convert-impl clojure.lang.Symbol
   [v to]
   (condp = to
+    :container (or (primitive-convert v :symbol :container)
+                   (eval v))
     :class (or (primitive-convert v :symbol :class)
                (eval v))
     :symbol v
@@ -66,6 +73,9 @@
 (defmethod class-convert-impl String
   [v to]
   (condp = to
+    :container (or (primitive-convert v :raw :container)
+                   (primitive-convert v :string :container)
+                   (Class/forName (string->raw v)))
     :class (or (primitive-convert v :raw :class)
                (primitive-convert v :string :class)
                (Class/forName (string->raw v)))

@@ -1,42 +1,64 @@
 package im.chit.iroh;
+
+import java.lang.reflect.Field;
   
 public class Util{
   
-  public static Object boxArg(Class paramType, Object arg){
-    if(!paramType.isPrimitive())
-      return paramType.cast(arg);
-    else if(paramType == boolean.class)
-      return Boolean.class.cast(arg);
-    else if(paramType == char.class)
-      return Character.class.cast(arg);
-    else if(arg instanceof Number){
-      Number n = (Number) arg;
-      if(paramType == int.class)
-        return n.intValue();
-      else if(paramType == float.class)
-        return n.floatValue();
-      else if(paramType == double.class)
-        return n.doubleValue();
-      else if(paramType == long.class)
-        return n.longValue();
-      else if(paramType == short.class)
-        return n.shortValue();
-      else if(paramType == byte.class)
-        return n.byteValue();
+  public static void setField (Field field, Object obj, Object val) throws IllegalAccessException{
+    Class fType = field.getType();
+    if(!fType.isPrimitive()){
+      field.set(obj, boxArg(fType, val));
+    } else if (fType == boolean.class){
+      field.setBoolean(obj, Boolean.class.cast(val));
+    } else if (fType == char.class) {
+      field.setChar(obj, Character.class.cast(val));
+    } else if (val instanceof Number){
+      Number n = (Number) val;
+      if(fType == int.class)
+        field.setInt(obj, n.intValue());
+      else if(fType == float.class)
+        field.setFloat(obj, n.floatValue());
+      else if(fType == double.class)
+        field.setDouble(obj, n.doubleValue());
+      else if(fType == long.class)
+        field.setLong(obj, n.longValue());
+      else if(fType == short.class)
+        field.setShort(obj, n.shortValue());
+      else if(fType == byte.class)
+        field.setByte(obj, n.byteValue());
+    } else {
+    throw new BoxException("Unexpected param type, expected: " + 
+      fType + ", given: " + val.getClass().getName());
     }
-    throw new IllegalArgumentException("Unexpected param type, expected: " + 
-      paramType + ", given: " + arg.getClass().getName());
   }
-
-  public static Object[] boxArgs(Class[] params, Object[] args){
-    if(params.length == 0) return null;
-    Object[] ret = new Object[params.length];
-    for(int i = 0; i < params.length; i++){
-      Object arg = args[i];
-      Class paramType = params[i];
-      ret[i] = boxArg(paramType, arg);
+  
+  public static Object boxArg(Class paramType, Object arg){
+    try {
+      if(!paramType.isPrimitive())
+        return paramType.cast(arg);
+      else if(paramType == boolean.class)
+        return Boolean.class.cast(arg);
+      else if(paramType == char.class)
+        return Character.class.cast(arg);
+      else if(arg instanceof Number){
+        Number n = (Number) arg;
+        if(paramType == int.class)
+          return n.intValue();
+        else if(paramType == float.class)
+          return n.floatValue();
+        else if(paramType == double.class)
+          return n.doubleValue();
+        else if(paramType == long.class)
+          return n.longValue();
+        else if(paramType == short.class)
+          return n.shortValue();
+        else if(paramType == byte.class)
+        return n.byteValue();}
+    } catch (ClassCastException e){
+        throw new BoxException(e.getMessage());
     }
-    return ret;
+    throw new BoxException("Unexpected param type, expected: " + 
+      paramType + ", given: " + arg.getClass().getName());
   }
 
   public static boolean paramArgTypeMatch(Class paramType, Class argType){

@@ -13,11 +13,6 @@
   (type (Util/boxArg Short/TYPE 1.0))
   => java.lang.Short)
 
-(fact "boxArgs"
-  (seq (Util/boxArgs (class-array Class [Integer/TYPE Float/TYPE])
-                     (object-array [1.0 2.0])))
-  => '(1 2.0))
-
 (fact "paramArgTypeMatch basics"
   (.isPrimitive Integer/TYPE)
   => true

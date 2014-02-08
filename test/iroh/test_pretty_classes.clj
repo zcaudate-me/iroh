@@ -2,7 +2,6 @@
   (:use midje.sweet)
   (:require [iroh.pretty.classes :refer :all]))
 
-
 (fact "type->raw"
   (type->raw Boolean/TYPE)
   => "Z"
@@ -64,3 +63,18 @@
 
   (class-convert "java.lang.Object[][]" :class)
   => (Class/forName "[[Ljava.lang.Object;"))
+
+
+(fact "class-convert"
+  (class-convert "char" :container)
+  => java.lang.Character
+
+  (class-convert Character/TYPE :container)
+  => java.lang.Character
+
+  (class-convert Character :class)
+  => Character/TYPE
+
+  (class-convert "char[][]" :container)
+  => (Class/forName "[[C")
+)

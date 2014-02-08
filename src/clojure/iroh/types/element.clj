@@ -1,9 +1,14 @@
 (ns iroh.types.element
   (:require [iroh.common :refer :all]))
 
+(defmacro invoke-element* [x & args]
+  `(invoke-element ~x ~@args))
+
 (defmulti invoke-element (fn [x & args] (:tag x)))
 
 (defmulti to-element (fn [obj] (type obj)))
+
+(defmulti element-params (fn [ele] (:tag ele)))
 
 (defmulti format-element (fn [ele] (:tag ele)))
 
@@ -26,12 +31,14 @@
       java.lang.Object
       (toString [ele]
         (format-element ele))
-     
+
       clojure.lang.ILookup
       (valAt [ele k]
         (if k (get body k) body))
 
-      clojure.lang.IFn)
+      clojure.lang.IFn
+      (applyTo [ele args]
+        (clojure.lang.AFn/applyToHelper ele args)))
    (map make-invoke-element-form
         (for [l (range n)]
           (vec (for [x (range l)]
@@ -41,6 +48,9 @@
 
 (defn element [body]
   (Element. body))
+
+(defn element? [x]
+  (instance? Element x))
 
 (defmethod print-method Element [v w]
   (.write w (str v)))

@@ -23,7 +23,7 @@
             :tag :method
             :hash number?
             :container java.lang.Object
-            :modifiers #{:method :public}
+            :modifiers #{:method :public :instance}
             :static false
             :delegate #(instance? java.lang.reflect.Method %)})
 
@@ -32,7 +32,7 @@
             :tag :method
             :hash number?
             :container java.lang.Object
-            :modifiers #{:method :public}
+            :modifiers #{:method :public  :instance}
             :static false
             :delegate #(instance? java.lang.reflect.Constructor %)})
 
