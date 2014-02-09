@@ -5,7 +5,15 @@
 
 (def sort-terms #{:by-name :by-params :by-modifiers :by-type})
 
-(def select-terms #{:name :params :modifiers :type :attributes})
+(def select-terms #{:tag
+                    :name
+                    :params
+                    :modifiers
+                    :type
+                    :attributes
+                    :origins
+                    :container
+                    :delegate})
 
 (defn args-classify [arg]
   (cond (sort-terms arg)                 :sort-terms

@@ -7,8 +7,9 @@
             [iroh.pretty.display :refer [display]]
             [iroh.element multi method field constructor]))
 
-(def ^:dynamic *static-description* (atom {}))
-(def ^:dynamic *instance-description* (atom {}))
+(defmacro .> [obj & args]
+  `(let [t# (type ~obj)]
+     (vec (concat [t#] (base-list t#)))))
 
 (defn all-class-members [class]
   (concat
@@ -56,9 +57,10 @@
            syms (distinct (map :name eles))
            iforms (mapcat (fn [sym] [(symbol sym) [class (symbol sym)]])
                           syms)]
-       `(do (clojure.core/ns ~(symbol (str ns)))
+       `(do (clojure.core/create-ns ~(list `symbol (str ns)))
+            (clojure.core/in-ns ~(list `symbol (str ns)))
             (let [vars# (iroh.core/def.import ~@iforms)]
-              (clojure.core/ns ~home)
+              (clojure.core/in-ns ~(list `symbol (str home)))
               vars#)))))
 
 (defn all-instance-elements
@@ -116,10 +118,27 @@
                   )))
             {} ks)))
 
+(defn apply-element [obj method args]
+  (let [lu (refine-lookup (object-lookup obj))]
+    (if-let [ele (get lu method)]
+      (cond (:field ele)
+            (apply ele obj args)
+
+            (:static ele)
+            (apply ele args)
+
+            :else
+            (apply ele obj args))
+      (throw (Exception. "Element not Found.")))))
+
+(defmacro .$ [obj method & args]
+  `(apply-element ~obj ~(name method) ~args))
+
+
 (comment
   (>pst)
   (keys (object-lookup (test.A.)))
-  (refine-lookup (object-lookup (test.A.)))
+
 
 
 
@@ -153,12 +172,3 @@
   ((.? test.A #"to" :#) (test.B.))
   ((.? test.A #"to" :#) (test.A.))
   )
-
-(defn list-object-elements [obj selectors])
-
-
-
-(defn apply-element [obj method args])
-
-(defmacro .$ [obj method & args]
-  `(apply-element ~obj ~method ~args))

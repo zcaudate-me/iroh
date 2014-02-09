@@ -1,0 +1,115 @@
+
+(comment "iroh.core"
+  (>pst)
+  (keys (object-lookup (test.A.)))
+  (refine-lookup (object-lookup (test.A.)))
+
+
+
+  ((-> (instance-lookup sun.reflect.ReflectionFactory)
+        (get "langReflectAccess")
+        (:fields)))
+
+  (def a 1)
+  ((.* a :private :#) a)
+  ((.* a #{Number} "shortValue"))
+  ((.? Integer  2 #(= "parseInt" (:name %))) "14" 10)
+  ((.? String "toCharArray" :#) "Oeuoeu")
+
+  (def acquire-accessor (.? java.lang.reflect.Method #"acquire" :#))
+  (.invoke (acquire-accessor (:delegate (.? test.A #"to" :#)))
+           (test.B.) (object-array 0))
+  ()
+
+  (def to-char-array (.? String "toCharArray" :#))
+
+  (to-char-array "oeuoeu")
+
+  ((.? sun.reflect.NativeMethodAccessorImpl "invoke0" :#)
+   (:delegate (.? test.A #"to" :#))
+   (cast test.A (test.B.))
+   (object-array []))
+
+  (instance-options )
+  ((.? test.B #"to" :#) (test.A.))
+  ((.? test.B #"to" :#) (test.B.))
+  ((.? test.A #"to" :#) (test.B.))
+  ((.? test.A #"to" :#) (test.A.))
+  )
+
+
+
+(comment "iroh.element.method"
+  (use 'iroh.core)
+  (>refresh)
+  ((.? Object "new" :#))
+  (.newInstance (:delegate (second (.? Long "new"))) (object-array ["oeuoeu"]))
+  (box-args (second (.? Long "new")) ["oeuoeu"])
+  (box-args (second (.? Long "new")) ["oeuoeu"])
+
+  ((second (.? Long "new")) "234234")
+  ((.? Long :method :private :#) 1 "o")
+  ((.? Long :method :private :#))
+  ((.? Class :method :instance "isInterface" :#) 1)
+  (>pst)
+  )
+
+
+
+(comment "From iroh.element.multi"
+  (use 'iroh.core)
+  (>refresh)
+  (.? String :instance :field)
+  ((to-element [(.? String :instance :field "hash" :#)]) "oueou" 1 2)
+  ((to-element [(.? String :instance :field "hash" :#)]) "oueou")
+
+  ((.? String :instance :field "hash" :#) "ouou") 1
+  (-> ((.? String :instance :field "value" :#) "ouou")
+      seq)
+
+  (def a "OUOEUOU")
+  ((.? String :instance :field "value" :#) a (char-array [\a]))
+
+  (>pst)
+
+  (apply (.? Object "wait" :#))
+  (apply (.? Object "toString" :#) [1 2])
+  (.? clojure.lang.IFn #"apply")
+  (>source apply)
+  )
+  
+
+
+
+
+
+
+
+
+;;(element-meta (to-element (.getDeclaredField A "finalA")))
+;;((.? java.util.Date :field :static #"serial" :#) 123123)
+;;((to-element (.getDeclaredField java.util.Date "serialVersionUID")) 10)
+
+(comment "iroh.element.field"
+  (import 'test.A 'test.B)
+  (def a (A.))
+  (def b (B.))
+  ;;(.finalA b)
+
+  (.get (:delegate (to-element (.getDeclaredField A "finalA"))) a)
+  (.get (:delegate (to-element (.getDeclaredField A "finalA"))) b)
+
+  ;;(.toString a)
+  ;;((to-element (.getDeclaredField A "finalA")) a) ",.p,.p,.p,.p"
+
+  (comment
+    (use 'iroh.core)
+    (>pst)
+    (>refresh)
+    (.* b)
+    ((.? Object "new" :#))
+    ((.? Long :field #"MAX" :#) 1)
+    (.isInstance Number 1)
+    (.getClass 1)
+    )
+)

@@ -7,7 +7,7 @@
 
 (fact "to-element"
   (str ele)
-  => "#[TYPE :: java.lang.Class]"
+  => "#[TYPE :: <java.lang.Integer> | java.lang.Class]"
 
   (invoke-element ele Integer)
   => Integer/TYPE

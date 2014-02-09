@@ -79,21 +79,3 @@
 
 (defmethod element-params :method [ele]
   (element-params-method ele))
-
-
-
-
-(comment
-  (use 'iroh.core)
-  (>refresh)
-  ((.? Object "new" :#))
-  (.newInstance (:delegate (second (.? Long "new"))) (object-array ["oeuoeu"]))
-  (box-args (second (.? Long "new")) ["oeuoeu"])
-  (box-args (second (.? Long "new")) ["oeuoeu"])
-
-  ((second (.? Long "new")) "234234")
-  ((.? Long :method :private :#) 1 "o")
-  ((.? Long :method :private :#))
-  ((.? Class :method :instance "isInterface" :#) 1)
-  (>pst)
-  )

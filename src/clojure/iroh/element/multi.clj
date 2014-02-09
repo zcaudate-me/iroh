@@ -76,26 +76,3 @@
                                  (mapv #(symbol (class-convert
                                                  (class %) :string))
                                        args))))))
-
-
-(comment
-  (use 'iroh.core)
-  (>refresh)
-  (.? String :instance :field)
-  ((to-element [(.? String :instance :field "hash" :#)]) "oueou" 1 2)
-  ((to-element [(.? String :instance :field "hash" :#)]) "oueou")
-
-  ((.? String :instance :field "hash" :#) "ouou") 1
-  (-> ((.? String :instance :field "value" :#) "ouou")
-      seq)
-
-  (def a "OUOEUOU")
-  ((.? String :instance :field "value" :#) a (char-array [\a]))
-
-  (>pst)
-
-  (apply (.? Object "wait" :#))
-  (apply (.? Object "toString" :#) [1 2])
-  (.? clojure.lang.IFn #"apply")
-  (>source apply)
-  )

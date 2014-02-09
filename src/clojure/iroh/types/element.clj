@@ -34,7 +34,10 @@
 
       clojure.lang.ILookup
       (valAt [ele k]
-        (if k (get body k) body))
+        (if (or (nil? k)
+                (= k :all))
+          body
+          (get body k)))
 
       clojure.lang.IFn
       (applyTo [ele args]
