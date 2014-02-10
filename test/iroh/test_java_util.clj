@@ -12,7 +12,7 @@
 
   (type (Util/boxArg Short/TYPE 1.0))
   => java.lang.Short)
-
+(comment
 (fact "paramArgTypeMatch basics"
   (.isPrimitive Integer/TYPE)
   => true
@@ -56,7 +56,4 @@
 
   (Util/paramArgTypeMatch java.util.Map clojure.lang.PersistentHashMap)
   => true)
-
-
-(fact "isCongruent"
-  ())
+)

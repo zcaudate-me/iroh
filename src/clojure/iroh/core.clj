@@ -7,6 +7,8 @@
             [iroh.pretty.display :refer [display]]
             [iroh.element multi method field constructor]))
 
+(def *cache* (atom {}))
+
 (defmacro .> [obj & args]
   `(let [t# (type ~obj)]
      (vec (concat [t#] (base-list t#)))))
@@ -64,11 +66,9 @@
               vars#)))))
 
 (defn all-instance-elements
-  [tcls icls current]
-  (let [supers (inheritance-list tcls)
-        eles (if current
-               (list-class-elements (last supers) [:instance])
-               (mapcat #(list-class-elements % [:instance]) supers))]
+  [tcls icls]
+  (let [supers (reverse (inheritance-list tcls))
+        eles   (mapcat #(list-class-elements % [:instance]) supers)]
     (concat eles
             (if icls (concat eles (list-class-elements icls [:static]))))))
 
@@ -76,7 +76,7 @@
   [obj selectors]
   (let [grp (args-group selectors)
         tcls (type obj)]
-    (->> (all-instance-elements tcls (if (class? obj) obj) (contains? grp :current))
+    (->> (all-instance-elements tcls (if (class? obj) obj))
          (display grp))))
 
 (defmacro .* [obj & selectors]
@@ -92,13 +92,25 @@
           (let [params (:params ele)]
             (conj base (count params) params)))))
 
+(defn assignable? [current base]
+  (->> (map (fn [x y]
+              (or (= y x)
+                  (.isAssignableFrom y x))) current base)
+       (every? identity)))
+
 (defn instance-lookup
   ([tcls] (instance-lookup tcls nil))
-  ([tcls icls] (instance-lookup tcls icls nil))
-  ([tcls icls current]
-      (reduce (fn [m ele]
-                (assoc-in m (instance-lookup-path ele) ele)) {}
-                (all-instance-elements tcls icls current))))
+  ([tcls icls]
+     (reduce (fn [m ele]
+               (if (= :method (:tag ele))
+                 (let [params (:params ele)
+                       params-lu (get-in m [(:name ele) :method (count params)])
+                       params-list (keys params-lu)]
+                   (if (some #(assignable? % params) params-list)
+                     m
+                     (assoc-in m (instance-lookup-path ele) ele)))
+                 (assoc-in m (instance-lookup-path ele) ele)))
+             {} (all-instance-elements tcls icls))))
 
 (defn object-lookup [obj]
   (let [tcls (type obj)]
@@ -118,8 +130,24 @@
                   )))
             {} ks)))
 
+(defn apply-vector [obj [class method] args]
+  (let [lu (refine-lookup (instance-lookup class nil))]
+    (if-let [ele (get lu method)]
+      "Apply Vector"
+      (throw (Exception. "Element not Found.")))))
+
+(defn get-element-lookup [obj]
+  (let [obj-type (type obj)
+        is-class   (if (class? obj) obj)]
+    (if-let [lu (get-in @*cache* [obj-type is-class])]
+      lu
+      (let [lu (refine-lookup (object-lookup obj))]
+        (swap! *cache* (fn [m]
+                        (assoc-in m [obj-type is-class] lu)))
+        lu))))
+
 (defn apply-element [obj method args]
-  (let [lu (refine-lookup (object-lookup obj))]
+  (let [lu (get-element-lookup obj)]
     (if-let [ele (get lu method)]
       (cond (:field ele)
             (apply ele obj args)
@@ -131,20 +159,26 @@
             (apply ele obj args))
       (throw (Exception. "Element not Found.")))))
 
-(defmacro .$ [obj method & args]
-  `(apply-element ~obj ~(name method) ~args))
-
+(defmacro .$ [method obj & args]
+  (if (vector? method)
+    `(apply-vector ~obj [~(first method) ~(name (second method))] ~(vec args))
+    `(apply-element ~obj ~(name method) ~(vec args))))
 
 (comment
   (>pst)
   (keys (object-lookup (test.A.)))
 
-
-
-
   ((-> (instance-lookup sun.reflect.ReflectionFactory)
         (get "langReflectAccess")
         (:fields)))
+
+  (.$ toString "1")
+
+  (.$ without {:a 1} :a)
+
+  (def handles-lu (java.lang.invoke.MethodHandles/lookup))
+  (.invoke (.unreflect handles-lu (:delegate (.? Object "equals" :#)))
+           (object-array ["1"]))
 
   (def a 1)
   ((.* a :private :#) a)
@@ -155,7 +189,18 @@
   (def acquire-accessor (.? java.lang.reflect.Method #"acquire" :#))
   (.invoke (acquire-accessor (:delegate (.? test.A #"to" :#)))
            (test.B.) (object-array 0))
-  ()
+
+  (reimport 'im.chit.iroh.Util
+            'test.A
+            'test.B)
+  (Util/invokeMethod (:delegate (.? test.B #"to" :#)) test. (list (test.B.)))
+  (.findSpecial (java.lang.invoke.MethodHandles/lookup) A "toString" )
+
+  (.invokeWithArguments
+   (.findSpecial (java.lang.invoke.MethodHandles/lookup)
+                 A "toString" (java.lang.invoke.MethodType/methodType String)
+                 Object)
+   (to-array (test.B.)))
 
   (def to-char-array (.? String "toCharArray" :#))
 

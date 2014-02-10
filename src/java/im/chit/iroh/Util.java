@@ -1,8 +1,17 @@
 package im.chit.iroh;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.util.List;
   
 public class Util{
+  
+  public static Object invokeMethod (Method method, Class cls, List<?> args) throws Throwable{
+    return MethodHandles.lookup().unreflectSpecial(method, cls).invokeWithArguments(args);
+  }
   
   public static void setField (Field field, Object obj, Object val) throws IllegalAccessException{
     Class fType = field.getType();
@@ -60,7 +69,7 @@ public class Util{
     throw new BoxException("Unexpected param type, expected: " + 
       paramType + ", given: " + arg.getClass().getName());
   }
-
+  /*
   public static boolean paramArgTypeMatch(Class paramType, Class argType){
     if(argType == null)
             return !paramType.isPrimitive();
@@ -108,4 +117,5 @@ public class Util{
     }
     return ret;
   }
+  */
 }
