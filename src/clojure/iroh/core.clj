@@ -165,6 +165,33 @@
     `(apply-element ~obj ~(name method) ~(vec args))))
 
 (comment
+  (def direct-handle (.? java.lang.invoke.DirectMethodHandle "new" :#))
+  (def method-type (.? java.lang.invoke.MethodType "makeImpl" :#))
+  (def member-from-method (.? java.lang.invoke.MemberName "new"
+                              [java.lang.reflect.Method] :#))
+
+  (def obj-member-name
+    (member-from-method (:delegate (.? Object "toString" :#))))
+  (def obj-type (method-type String (class-array Class [Object]) true))
+  (def obj-handle (direct-handle obj-type obj-member-name false Object))
+  (invoke obj-handle 1) ;;=> "java.lang.Long@1"
+  (invoke obj-handle 100) ;;=> "java.lang.Long@64"
+
+
+  (def member-name (.? java.lang.invoke.MemberName "new" [Class String java.lang.invoke.MethodType] :#))
+  (def str-type (method-type String (class-array Class [String]) true))
+  (def str-member-name
+    (member-from-method (:delegate (.? String "toString" :#))))
+  (def str-handle (direct-handle str-type str-member-name false String))
+
+  (defn invoke [^java.lang.invoke.MethodHandle handle & args]
+    (.invokeWithArguments handle (object-array args)))
+
+  (invoke obj-handle "oeuoeu")
+  (invoke str-handle "oeuoeueo")
+
+  (java.lang.invoke.MethodType.)
+
   (>pst)
   (keys (object-lookup (test.A.)))
 
@@ -181,7 +208,8 @@
            (object-array ["1"]))
 
   (def a 1)
-  ((.* a :private :#) a)
+  (>pst)
+  ((.* a #{String}) a)
   ((.* a #{Number} "shortValue"))
   ((.? Integer  2 #(= "parseInt" (:name %))) "14" 10)
   ((.? String "toCharArray" :#) "Oeuoeu")
@@ -202,9 +230,12 @@
                  Object)
    (to-array (test.B.)))
 
-  (def to-char-array (.? String "toCharArray" :#))
+  (def to-char-ar
+    ray (.? String "toCharArray" :#))
 
   (to-char-array "oeuoeu")
+  ((.* "oueu" "toString" [String] :#) "oeuoeu")
+  ((.* "oueu" "toString" [Object] :#) "oeuoeu")
 
   ((.? sun.reflect.NativeMethodAccessorImpl "invoke0" :#)
    (:delegate (.? test.A #"to" :#))
@@ -212,8 +243,7 @@
    (object-array []))
 
   (instance-options )
-  ((.? test.B #"to" :#) (test.A.))
+  ((.? Object #"to" :#) (test.A.))
   ((.? test.B #"to" :#) (test.B.))
   ((.? test.A #"to" :#) (test.B.))
-  ((.? test.A #"to" :#) (test.A.))
-  )
+  ((.? test.A #"to" :#) (test.A.)))

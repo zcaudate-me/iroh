@@ -37,3 +37,30 @@
          :static  (contains? modifiers :static)
          :delegate obj}
         (add-annotations obj))))
+
+(defmacro throw-arg-exception [ele args]
+  `(throw (Exception. (format  "Method `%s` expects params to be of type %s, but was invoked with %s instead"
+                              (str (:name ~ele))
+                              (str (:params ~ele))
+                              (str (mapv type ~args))))))
+
+(defn box-args [ele args]
+  (let [params (:params ele)]
+    (if (= (count params) (count args))
+      (try (mapv (fn [ptype arg]
+                  (im.chit.iroh.Util/boxArg ptype arg))
+                params
+                args)
+           (catch im.chit.iroh.BoxException e
+             (throw-arg-exception ele args)))
+      (throw-arg-exception ele args))))
+
+(defn format-element-method [ele]
+  (let [params (map #(class-convert % :string) (:params ele))]
+    (format "#[%s :: (%s) -> %s]"
+                      (:name ele)
+                      (clojure.string/join ", " params)
+                      (class-convert (:type ele) :string))))
+
+(defn element-params-method [ele]
+  (mapv #(symbol (class-convert % :string)) (:params ele)))
