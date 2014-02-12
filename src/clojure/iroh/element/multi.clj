@@ -59,12 +59,13 @@
         prelim (get-in (:lookup ele) [:method argc])]
     (if-let [[[_ candidate] & more] (seq prelim)]
       (if (nil? more)
-        (apply candidate args)))))
+        (apply candidate args)
+        (recur more args)))))
 
 (defn invoke-field-multi [ele args]
   (if-let [candidate (get-in (:lookup ele)
                              [:field 0 []])]
-    (if (= (type args)) ;;TODO write can apply
+    (if (> 2 (count args))
       (apply candidate args))))
 
 

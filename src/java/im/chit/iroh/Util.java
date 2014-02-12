@@ -69,7 +69,7 @@ public class Util{
     throw new BoxException("Unexpected param type, expected: " + 
       paramType + ", given: " + arg.getClass().getName());
   }
-  /*
+  
   public static boolean paramArgTypeMatch(Class paramType, Class argType){
     if(argType == null)
             return !paramType.isPrimitive();
@@ -117,5 +117,4 @@ public class Util{
     }
     return ret;
   }
-  */
 }

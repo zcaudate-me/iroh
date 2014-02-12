@@ -2,7 +2,8 @@
   (:require [iroh.core :refer :all]
             [iroh.hierarchy :refer :all]
             [midje.sweet :refer :all])
-  (:refer-clojure :exclude [.> .* .? .$ >ns >var]))
+  (:refer-clojure :exclude [.> .* .? .$ >ns >var])
+  )
 
 [[:chapter {:title "Walkthrough"}]]
 
@@ -106,6 +107,7 @@
 
   (:type char-at)  => Character/TYPE)
 
+
 (facts
   "The full datastructure can be accessed via the `:all` keyword"
 
@@ -119,8 +121,7 @@
             :static false
             :params [String Integer/TYPE]
             :type Character/TYPE
-            :delegate fn?
-            :handle #(instance? java.lang.invoke.MethodHandle %)}))
+            :delegate fn?}))
 
 "Looking at `char-at` isn't really that interesting, a faster version of `char-at` can be specified much more easily:"
 

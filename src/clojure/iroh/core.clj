@@ -163,11 +163,12 @@
       (throw (Exception. "Element not Found.")))))
 
 (defmacro .$ [method obj & args]
-  (if (vector? method)
-    `(apply-vector ~obj [~(first method) ~(name (second method))] ~(vec args))
-    `(apply-element ~obj ~(name method) ~(vec args))))
+  `(apply-element ~obj ~(name method) ~(vec args)))
 
 (comment
+  (origins (:delegate (.? String "charAt" :#)))
+  (seq (.getInterfaces String))
+  (.? CharSequence)
   (def direct-handle (.? java.lang.invoke.DirectMethodHandle "new" :#))
   (def method-type (.? java.lang.invoke.MethodType "makeImpl" :#))
   (def member-from-method (.? java.lang.invoke.MemberName "new"
@@ -202,10 +203,12 @@
         (get "langReflectAccess")
         (:fields)))
 
-  (.$ toString "1")
+
+  (.$ toString)
 
   (.$ without {:a 1} :a)
 
+  (get (get-element-lookup (.* {:a 1})) "toString")
   (def handles-lu (java.lang.invoke.MethodHandles/lookup))
   (.invoke (.unreflect handles-lu (:delegate (.? Object "equals" :#)))
            (object-array ["1"]))
