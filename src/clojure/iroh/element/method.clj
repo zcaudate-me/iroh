@@ -5,10 +5,7 @@
             [iroh.element.common :refer :all]
             [iroh.element.constructor]
             [iroh.pretty.classes :refer [class-convert]])
-  (:import [java.lang.invoke
-            DirectMethodHandle
-            MethodType MemberName]
-           [java.lang.reflect Method]))
+  (:import [java.lang.reflect Method]))
 
 (defn invoke-static-method
   ([ele]
@@ -54,16 +51,29 @@
                (to-instance-method obj body))]
     body))
 
-(def direct-method-handle
-  (to-element
-   (.getDeclaredConstructor
-    DirectMethodHandle
-    (class-array Class [MethodType MemberName Boolean/TYPE Class]))))
+(def direct-method-handle-seed
+  (to-pre-element
+   (.getDeclaredMethod
+    java.lang.invoke.DirectMethodHandle "make"
+    (class-array Class [Class java.lang.invoke.MemberName]))))
+
+(defn direct-method-handle [cls mn]
+  (invoke-static-method direct-method-handle-seed [cls mn]))
+
+(def direct-method-handle-make-seed
+  (to-pre-element
+   (.getDeclaredMethod
+    java.lang.invoke.DirectMethodHandle "make"
+    (class-array Class [Method]))))
+
+
+(defn direct-method-handle-make [method]
+  (invoke-static-method direct-method-handle-make-seed [method]))
 
 (def method-type-seed
   (to-pre-element
    (.getDeclaredMethod
-    MethodType "makeImpl"
+    java.lang.invoke.MethodType "makeImpl"
     (class-array Class [Class (Class/forName "[Ljava.lang.Class;") Boolean/TYPE]))))
 
 (defn method-type [cls params type]
@@ -72,12 +82,13 @@
 (def member-name
   (to-element
    (.getDeclaredConstructor
-    MemberName (class-array Class [Method]))))
+    java.lang.invoke.MemberName (class-array Class [Method]))))
 
 (defn direct-handle [ele]
   (let [mt (method-type (:type ele) (class-array Class (:params ele)) true)
         mn (member-name (:delegate ele))]
-    (direct-method-handle mt mn false (:container ele))))
+    ;;(direct-method-handle (:container ele) mn)
+    (direct-method-handle-make (:delegate ele))))
 
 (defmethod to-element java.lang.reflect.Method [obj]
   (let [body (-> (to-pre-element obj)

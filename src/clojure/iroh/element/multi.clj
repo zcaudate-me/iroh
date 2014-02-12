@@ -52,7 +52,7 @@
                (clojure.string/join ", "))))
 
 (defmethod element-params :multi [ele]
-  (mapv element-params (:array ele)))
+  (vec (mapcat element-params (:array ele))))
 
 (defn invoke-method-multi [ele args]
   (let [argc (count args)

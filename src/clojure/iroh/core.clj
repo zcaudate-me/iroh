@@ -43,8 +43,8 @@
                     (clojure.string/join ", " (map name (:modifiers ele))))))))
 
 (defmacro >var
-  ([name [class method]]
-     `(let [var (def ~name (iroh.core/.? ~class ~(str method) :#))]
+  ([name [class method & selectors]]
+     `(let [var (def ~name (iroh.core/.? ~class ~(str method) ~@selectors :#))]
         (alter-meta! var
                      (fn [~'m] (merge ~'m (element-meta ~name))))
         var))
@@ -53,7 +53,8 @@
        ~@(map #(cons `iroh.core/>var %) (partition 2 more))]))
 
 (defmacro >ns
-  ([ns class f] `(>ns ~ns ))
+  ([ns class] `(>ns ~ns identity))
+  ([ns class f] `(>ns ~ns ~f []))
   ([ns class f selectors]
      (let [home (.getName *ns*)
            eles (list-class-elements (resolve class) (args-convert selectors))
@@ -62,12 +63,9 @@
                           syms)]
        `(do (clojure.core/create-ns ~(list `symbol (str ns)))
             (clojure.core/in-ns ~(list `symbol (str ns)))
-            (let [vars# (iroh.core/def.import ~@iforms)]
+            (let [vars# (iroh.core/>var ~@iforms)]
               (clojure.core/in-ns ~(list `symbol (str home)))
-              vars#))))
-  ([ns class f selectors & more]
-     `[(iroh.core/>var ~name ~pair)
-       ~@(map #(cons `iroh.core/>var %) (partition 2 more))]))
+              vars#)))))
 
 (defn all-instance-elements
   [tcls icls]
@@ -246,7 +244,15 @@
    (cast test.A (test.B.))
    (object-array []))
 
-  (instance-options )
+
+  (defn invoke-handle [^java.lang.invoke.MethodHandle handle args]
+    (.invokeWithArguments handle (object-array args)))
+
+  (invoke-handle (:handle (.? Object #"to" :#)) ["oeuo"])
+
+  (macroexpand-1 (>ns test.string String identity []))
+
+  (test.string/value "oeuoeu")
   ((.? Object #"to" :#) (test.A.))
   ((.? test.B #"to" :#) (test.B.))
   ((.? test.A #"to" :#) (test.B.))
