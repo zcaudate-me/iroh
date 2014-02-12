@@ -22,7 +22,7 @@
   (let [bargs (box-args ele args)]
     (if (-> ele :modifiers :abstract)
       (.invoke (:delegate ele) (first bargs) (object-array (rest bargs)))
-      (invoke-handle (:handle ele) args))))
+      (invoke-handle (:handle ele) bargs))))
 
 (defmethod invoke-element :method
   ([ele]

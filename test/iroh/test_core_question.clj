@@ -2,7 +2,8 @@
   (:use midje.sweet)
   (:require [iroh.core :refer :all]
             [iroh.types.element :refer :all]
-            [iroh.pretty.classes :refer [class-convert]] :reload))
+            [iroh.pretty.classes :refer [class-convert]])
+  (:refer-clojure :exclude [.> .* .? .$ >ns >var]))
 
 (fact ".? field"
   (.? String :field :name)

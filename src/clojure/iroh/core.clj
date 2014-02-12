@@ -5,9 +5,10 @@
             [iroh.pretty.classes :refer [class-convert]]
             [iroh.pretty.args :refer [args-convert args-group]]
             [iroh.pretty.display :refer [display]]
-            [iroh.element multi method field constructor]))
+            [iroh.element multi method field constructor])
+  (:refer-clojure :exclude [.> .* .? .$ >ns >var]))
 
-(def *cache* (atom {}))
+(def ^:dynamic *cache* (atom {}))
 
 (defmacro .> [obj & args]
   `(let [t# (type ~obj)]

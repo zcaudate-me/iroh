@@ -1,18 +1,16 @@
 (ns midje-doc.iroh-walkthrough
   (:require [iroh.core :refer :all]
             [iroh.hierarchy :refer :all]
-            [midje.sweet :refer :all]))
+            [midje.sweet :refer :all])
+  (:refer-clojure :exclude [.> .* .? .$ >ns >var]))
 
 [[:chapter {:title "Walkthrough"}]]
 
 "Say I wanted to test all methods for clojure.lang.PersistentHashMap"
 
-(def.import EMPTY [clojure.lang.PersistentHashMap EMPTY])
+(>var EMPTY [clojure.lang.PersistentHashMap EMPTY])
 
-(ns user.test)
-
-(1)
-(>pst)
+;;(ns user.test)
 
 [[:section {:title "Overview"}]]
 
@@ -121,7 +119,8 @@
             :static false
             :params [String Integer/TYPE]
             :type Character/TYPE
-            :delegate #(instance? java.lang.reflect.Method %)}))
+            :delegate fn?
+            :handle #(instance? java.lang.invoke.MethodHandle %)}))
 
 "Looking at `char-at` isn't really that interesting, a faster version of `char-at` can be specified much more easily:"
 
@@ -268,7 +267,7 @@
 
 
   (macroexpand-1
-   '(def.import
+   '(>ns
       without2 [clojure.lang.IPersistentMap without]))
   => (clojure.core/let [var (def without2 (iroh.core/.? clojure.lang.IPersistentMap "without" :#))] (clojure.core/alter-meta! var (clojure.core/fn [m] (clojure.core/merge m (iroh.core/element-meta without2)))) var)
 
