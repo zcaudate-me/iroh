@@ -1,10 +1,8 @@
 (ns iroh.element.constructor
   (:require [iroh.common :refer :all]
             [iroh.types.element :refer :all]
-            [iroh.element.common :refer [seed]]
-            [iroh.element.method :refer :all]
+            [iroh.element.common :refer :all]
             [iroh.pretty.classes :refer [class-convert]]))
-
 
 (defmethod invoke-element :constructor [ele & args]
   (let [bargs (box-args ele args)]

@@ -2,25 +2,13 @@
   (:require [iroh.common :refer :all]
             [iroh.hierarchy :refer :all]
             [iroh.types.element :refer :all]
-            [iroh.element.common :refer [seed]]
-            [iroh.pretty.classes :refer [class-convert]]))
-
-(defmacro throw-arg-exception [ele args]
-  `(throw (Exception. (format  "Method `%s` expects params to be of type %s, but was invoked with %s instead"
-                              (str (:name ~ele))
-                              (str (:params ~ele))
-                              (str (mapv type ~args))))))
-
-(defn box-args [ele args]
-  (let [params (:params ele)]
-    (if (= (count params) (count args))
-      (try (mapv (fn [ptype arg]
-                  (im.chit.iroh.Util/boxArg ptype arg))
-                params
-                args)
-           (catch im.chit.iroh.BoxException e
-             (throw-arg-exception ele args)))
-      (throw-arg-exception ele args))))
+            [iroh.element.common :refer :all]
+            [iroh.element.constructor]
+            [iroh.pretty.classes :refer [class-convert]])
+  (:import [java.lang.invoke
+            DirectMethodHandle
+            MethodType MemberName]
+           [java.lang.reflect Method]))
 
 (defn invoke-static-method
   ([ele]
@@ -30,9 +18,14 @@
   ([ele args]
      (.invoke (:delegate ele) nil (object-array (box-args ele args)))))
 
+(defn invoke-handle [^java.lang.invoke.MethodHandle handle args]
+  (.invokeWithArguments handle (object-array args)))
+
 (defn invoke-instance-method [ele args]
   (let [bargs (box-args ele args)]
-    (.invoke (:delegate ele) (first bargs) (object-array (rest bargs)))))
+    (if (-> ele :modifiers :abstract)
+      (.invoke (:delegate ele) (first bargs) (object-array (rest bargs)))
+      (invoke-handle (:handle ele) args))))
 
 (defmethod invoke-element :method
   ([ele]
@@ -44,7 +37,6 @@
        (invoke-static-method ele args)
        (invoke-instance-method ele args))))
 
-
 (defn to-static-method [obj body]
   (-> body
       (assoc :params (vec (seq (.getParameterTypes obj))))
@@ -55,27 +47,48 @@
       (assoc :params (vec (cons (:container body) (seq (.getParameterTypes obj)))))
       (assoc :origins (origins obj))))
 
-(defmethod to-element java.lang.reflect.Method [obj]
+(defn to-pre-element [obj]
   (let [body (seed :method obj)
         body (if (:static body)
                (to-static-method obj body)
                (to-instance-method obj body))]
-      (-> body
-          (assoc :type (.getReturnType obj))
-          (element))))
+    body))
 
-(defn format-element-method [ele]
-  (let [params (map #(class-convert % :string) (:params ele))]
-    (format "#[%s :: (%s) -> %s]"
-                      (:name ele)
-                      (clojure.string/join ", " params)
-                      (class-convert (:type ele) :string))))
+(def direct-method-handle
+  (to-element
+   (.getDeclaredConstructor
+    DirectMethodHandle
+    (class-array Class [MethodType MemberName Boolean/TYPE Class]))))
+
+(def method-type-seed
+  (to-pre-element
+   (.getDeclaredMethod
+    MethodType "makeImpl"
+    (class-array Class [Class (Class/forName "[Ljava.lang.Class;") Boolean/TYPE]))))
+
+(defn method-type [cls params type]
+  (invoke-static-method method-type-seed [cls params type]))
+
+(def member-name
+  (to-element
+   (.getDeclaredConstructor
+    MemberName (class-array Class [Method]))))
+
+(defn direct-handle [ele]
+  (let [mt (method-type (:type ele) (class-array Class (:params ele)) true)
+        mn (member-name (:delegate ele))]
+    (direct-method-handle mt mn false (:container ele))))
+
+(defmethod to-element java.lang.reflect.Method [obj]
+  (let [body (-> (to-pre-element obj)
+                 (assoc :type (.getReturnType obj)))
+        body (if (-> body :modifiers :abstract)
+               body
+               (assoc body :handle (direct-handle body)))]
+    (element body)))
 
 (defmethod format-element :method [ele]
   (format-element-method ele))
-
-(defn element-params-method [ele]
-  (mapv #(symbol (class-convert % :string)) (:params ele)))
 
 (defmethod element-params :method [ele]
   (list (element-params-method ele)))
