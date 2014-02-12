@@ -5,7 +5,7 @@
 >  ever see. Many things that seem threatening in the dark become welcoming 
 >  when we shine light on them.'
  
->                     Uncle Iroh, The Legend of Korra 
+> Uncle Iroh, The Legend of Korra 
 
 ## Installation
 
@@ -17,16 +17,20 @@ Add to project.clj dependencies:
 
 Main functionality is accessed through:
 
+```clojure
     (use 'iroh.core)
+```
 
 The api consists of the following macros:
 
+```clojure
     .> - for showing type hierarchy
     .? - for showing class elements
     .* - for showing instance elements
     .$ - for reflective invocation of objects
     >var - for importing elements into current namespace
     >ns - for importing object elements into a namespace
+```
 
 ## `.>` - Type Hierarchy
 
@@ -57,7 +61,28 @@ The api consists of the following macros:
 
 ### `.?` and `.*`
 
-`.?` and `.*` have the same listing and filtering mechanisms but they do things a little differently. `.?` holds the java view of the Class declaration, staying true to the class and its members. `.*` holds the runtime view of Objects and what methods could be applied to that instance. `.*` will also look up the inheritance tree to fill in additional functionality.
+`.?` and `.*` have the same listing and filtering mechanisms but they do things a little differently. `.?` holds the java view of the Class declaration, staying true to the class and its members. `.*` holds the runtime view of Objects and what methods could be applied to that instance. `.*` will also look up the inheritance tree to fill in additional functionality. 
+
+Below shows three examples. All the method asks for members of String beginning with `c`.:
+
+```clojure
+(.? String  #"^c" :name)
+;;=> ["charAt" "checkBounds" "codePointAt" "codePointBefore"
+;;    "codePointCount" "compareTo" "compareToIgnoreCase"
+;;    "concat" "contains" "contentEquals" "copyValueOf"]
+
+(.* String #"^c" :name)
+;;=> ["cachedConstructor" "cannotCastMsg" "cast" "checkBounds" 
+;;    "checkMemberAccess" "classRedefinedCount" "classValueMap" 
+;;    "clearCachesOnClassRedefinition" "clone" "copyValueOf"]
+
+(.* (String.) #"^c" :name)
+;;=> ["charAt" "clone" "codePointAt" "codePointBefore" 
+;;    "codePointCount" "compareTo" "compareToIgnoreCase" 
+;;    "concat" "contains" "contentEquals"]
+
+`.?` lists is what we expect. `.*` lists all static methods and fields as well as Class methods of `String`, whilst for instances of `String`, it will list all the instance methods from the entire class hierachy.
+```
 
 #### Filtering
 
@@ -69,15 +94,6 @@ There are many filters that can be used with .?:
   - longs for filtering of input argment count
   - keywords for filtering of element modifiers
   - keywords for customization of return types
-
-All the method names in String beginning with `c`:
-
-```clojure
-(.? String  #"^c" :name)
-;;=> ["charAt" "checkBounds" "codePointAt" "codePointBefore"
-;;    "codePointCount" "compareTo" "compareToIgnoreCase"
-;;    "concat" "contains" "contentEquals" "copyValueOf"]
-```
 
 All the private element names in String beginning with `c`:
 
@@ -108,16 +124,19 @@ All the private non-static field names in String:
 ;;=> ["hash" "hash32" "value"]
 ```
 
-
 #### Application
-The keyword `:#` is used as a convienience argument to create elements from the returned list. In the following example, It is assigned to char-at:
+The keyword `:#` is used as a convienience argument to create elements from the returned list. In the following example, It is assigned to `char-at`:
 
+```clojure
     (def char-at (.? String "charAt" :#))
+```
 
 `char-at` is an method element. It can be turned into a string:
 
-    (str char-at)
-    ;;=> "#[charAt :: (java.lang.String, int) -> char]"
+```clojure
+(str char-at)
+;;=> "#[charAt :: (java.lang.String, int) -> char]"
+```
 
 From the string, it hints that `char-at` is invokable. The element takes in a `String` and an `int`, returning a `char`. It can be used like any other clojure function.
 
