@@ -5,10 +5,14 @@
 
 [[:chapter {:title "Walkthrough"}]]
 
-"Say I wanted to test all methods for clojure.lang"
+"Say I wanted to test all methods for clojure.lang.PersistentHashMap"
 
 (def.import EMPTY [clojure.lang.PersistentHashMap EMPTY])
 
+(ns user.test)
+
+(1)
+(>pst)
 
 [[:section {:title "Overview"}]]
 
@@ -24,8 +28,8 @@
   .? - for showing class elements
   .* - for showing instance elements
   .$ - for reflective invocation of objects
-  def.import - for importing elements into current namespace
-  def.extract - for creating a new namespace with all elements in object)
+  >var - for importing elements into current namespace
+  >ns - for importing object elements into a namespace)
 
 [[:section {:title "Type Hierarchy"}]]
 
@@ -229,6 +233,8 @@
   => ["hash" "hash32" "value"]
   )
 
+[[:chapter {:title "Instance Elements"}]]
+
 " There is a distinction between `static elements` and `non-static elements` (which we define as `instance elements`)."
 
 (.* "oe" #"hash" :name :modifiers :params :container)
@@ -248,3 +254,83 @@
   {:params [java.lang.String],
    :name "hashCode",
    :modifiers #{:instance :method :public}}]
+
+(.isAssignableFrom clojure.lang.PersistentHashMap java.util.Map)
+ ;;=> false
+
+(.isAssignableFrom java.util.Map clojure.lang.PersistentHashMap)
+ ;;=> true
+
+(comment
+  (def.import empty-hash [clojure.lang.PersistentHashMap EMPTY])
+
+  (.? clojure.lang.PersistentHashMap)
+
+
+  (macroexpand-1
+   '(def.import
+      without2 [clojure.lang.IPersistentMap without]))
+  => (clojure.core/let [var (def without2 (iroh.core/.? clojure.lang.IPersistentMap "without" :#))] (clojure.core/alter-meta! var (clojure.core/fn [m] (clojure.core/merge m (iroh.core/element-meta without2)))) var)
+
+  (without2 {:a 1} :a)
+
+  (let)
+
+  ((.? clojure.lang.IPersistentMap "without" :#)
+   {:a 1} :a) => {}
+
+   (.? clojure.lang.ISeq)
+   (:all without1)
+   (without1 {:a 1} :a)
+   (>pst)
+
+   (def.extract test.string String)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+)

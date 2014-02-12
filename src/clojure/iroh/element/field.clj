@@ -78,5 +78,5 @@
             (class-convert (:type ele) :string))))
 
 (defmethod element-params :field [ele]
-  [(mapv #(symbol (class-convert % :string)) (arg-params ele :get))
-   (mapv #(symbol (class-convert % :string)) (arg-params ele :set))])
+  (list (mapv #(symbol (class-convert % :string)) (arg-params ele :get))
+        (mapv #(symbol (class-convert % :string)) (arg-params ele :set))))

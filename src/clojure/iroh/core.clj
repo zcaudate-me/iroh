@@ -31,7 +31,7 @@
 
 (defn element-meta [ele]
     (-> {}
-        (assoc :arglists (element-params ele))
+        (assoc :arglists (concat (element-params ele)))
         (assoc :doc
           (if (= :multi (:tag ele)) ""
             (format "------------------\n\nmember: %s\n\ntype: %s\n\nmodifiers: %s"
@@ -40,18 +40,19 @@
                     (class-convert (:type ele) :string)
                     (clojure.string/join ", " (map name (:modifiers ele))))))))
 
-(defmacro def.import
+(defmacro >var
   ([name [class method]]
      `(let [var (def ~name (iroh.core/.? ~class ~(str method) :#))]
         (alter-meta! var
                      (fn [~'m] (merge ~'m (element-meta ~name))))
         var))
   ([name pair & more]
-     `[(iroh.core/def.import ~name ~pair)
-       ~@(map #(cons `iroh.core/def.import %) (partition 2 more))]))
+     `[(iroh.core/>var ~name ~pair)
+       ~@(map #(cons `iroh.core/>var %) (partition 2 more))]))
 
-(defmacro def.extract
-  ([ns class & selectors]
+(defmacro >ns
+  ([ns class f] `(>ns ~ns ))
+  ([ns class f selectors]
      (let [home (.getName *ns*)
            eles (list-class-elements (resolve class) (args-convert selectors))
            syms (distinct (map :name eles))
@@ -61,7 +62,10 @@
             (clojure.core/in-ns ~(list `symbol (str ns)))
             (let [vars# (iroh.core/def.import ~@iforms)]
               (clojure.core/in-ns ~(list `symbol (str home)))
-              vars#)))))
+              vars#))))
+  ([ns class f selectors & more]
+     `[(iroh.core/>var ~name ~pair)
+       ~@(map #(cons `iroh.core/>var %) (partition 2 more))]))
 
 (defn all-instance-elements
   [tcls icls current]

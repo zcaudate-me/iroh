@@ -43,6 +43,9 @@
   ([v] (class-convert v :class))
   ([v to] (class-convert-impl v to)))
 
+(defn class-convert-strin [v]
+  (class-convert v :string))
+
 (defmethod class-convert-impl :default
   [v to])
 

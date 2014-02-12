@@ -78,4 +78,4 @@
   (mapv #(symbol (class-convert % :string)) (:params ele)))
 
 (defmethod element-params :method [ele]
-  (element-params-method ele))
+  (list (element-params-method ele)))
