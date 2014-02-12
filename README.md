@@ -169,6 +169,45 @@ Data for char-at is accessed using keyword lookups:
 ```
 
 
+Private class members and fields can be exposed as easily as public ones. First, a list of private methods defined in Integers are listed:
+
+```clojure
+(.? Integer :private :method :name)
+=> ["toUnsignedString"]
+```
+
+Since there is only toUnsignedString, it will be extracted:
+
+
+```clojure
+(def unsigned-str (.? Integer "toUnsignedString" :#))
+```
+
+As can be seen by its modifiers, unsigned-str is private static method:
+
+
+```clojure
+(:modifiers unsigned-str)
+;;=> #{:method :private :static}
+```
+
+The string representation shows that it takes two ints and returns a String:
+
+
+```clojure
+(str unsigned-str)
+;;=> "#[toUnsignedString :: (int, int) -> java.lang.String]"
+```
+
+The element can now be used, just like a normal function:
+
+```clojure
+(unsigned-str 10 1)
+;;=> "1010"
+
+(mapv #(unsigned-str 32 (inc %)) (range 6))
+;;=> ["100000" "200" "40" "20" "10" "w"]
+```
 
 
 ## License
