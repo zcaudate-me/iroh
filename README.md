@@ -28,6 +28,10 @@ Add to project.clj dependencies:
 [im.chit/iroh "0.1.5-SNAPSHOT"]
 ```
 
+## Work in Progress:
+- multi-method Invocation (when a method has the same name but more than one instance)
+- overridden method invocation (see  http://stackoverflow.com/questions/5411434/how-to-call-a-superclass-method-using-java-reflection)
+
 ## Usage
 
 Main functionality is accessed through:
@@ -79,8 +83,9 @@ We can extract methods from a Class or interface with `>var`
 ```
 
 ### `>ns` - Import as Namespace
-We can extract an entire class into a namespace:
+We can extract an entire class into a namespace. These are modifiable by selectors, explained later:
 
+```clojure
 (>ns test.string String :private)
 ;; => [#'test.string/HASHING_SEED #'test.string/checkBounds
 ;;     #'test.string/hash #'test.string/hash32
@@ -91,7 +96,7 @@ We can extract an entire class into a namespace:
 
 (seq (test.string/value "hello"))
 ;;=> (\h \e \l \l \o)
-
+```
 ### Elements
 
 We review some properties of extracted elements:
@@ -277,6 +282,17 @@ All the private non-static field names in String:
 (.? String :name :private :field :instance)
 ;;=> ["hash" "hash32" "value"]
 ```
+
+
+### `.$` - Application
+A shorthand way of accessing private field is done by using .$:
+
+```clojure
+(def a "hello")
+(.$ value a (char-array "world"))
+a ;;=> "world"
+```
+
 
 ## License
 
