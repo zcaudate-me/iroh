@@ -170,6 +170,8 @@
   (.> {})
   (.? (type {}) #{java.util.Map} :name)
 
+  ((.? String "new" :#) (byte-array (map byte "oeuoeu")))
+  => "oeuoeu"
 
   (.? java.util.Map :name)
 

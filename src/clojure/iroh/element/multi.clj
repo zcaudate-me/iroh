@@ -1,6 +1,7 @@
 (ns iroh.element.multi
   (:require [iroh.types.element :refer :all]
-            [iroh.pretty.classes :refer [class-convert]]))
+            [iroh.pretty.classes :refer [class-convert]])
+  (:import im.chit.iroh.Util))
 
 (defn get-name [v]
   (let [names (map :name v)]
@@ -43,38 +44,52 @@
     (multi-element m v)))
 
 
-(defmethod format-element :multi [ele]
+(defmethod format-element :multi [mele]
   (format "#[%s :: %s]"
-          (:name ele)
-          (->> (:array ele)
+          (:name mele)
+          (->> (:array mele)
                (map element-params)
                (map (fn [params] (if (empty? params) [] (apply list params))))
                (sort (fn [x y] (compare (count x) (count y))))
                (clojure.string/join ", "))))
 
-(defmethod element-params :multi [ele]
-  (map element-params (:array ele)))
+(defmethod element-params :multi [mele]
+  (map element-params (:array mele)))
 
-(defn invoke-method-multi [ele args]
-  (let [argc (count args)
-        prelim (get-in (:lookup ele) [:method argc])]
-    (if-let [[[_ candidate] & more] (seq prelim)]
-      (if (nil? more)
-        (apply candidate args)
-        (recur more args)))))
+(defn elegible-candidates [prelim aparams]
+  (->> prelim
+       (map (fn [[_ v]] v))
+       (filter (fn [ele]
+                 (println aparams (:params ele))
+                 (every? (fn [[ptype atype]]
+                           (Util/paramArgTypeMatch ptype atype))
+                         (map list (:params ele) aparams))))))
 
-(defn invoke-field-multi [ele args]
-  (if-let [candidate (get-in (:lookup ele)
-                             [:field 0 []])]
-    (if (> 2 (count args))
-      (apply candidate args))))
+(defn find-method-candidate [mele aparams]
+  (let [tag (if (= "new" (:name mele)) :constructor :method)
+        prelim (get-in (:lookup mele) [tag (count aparams)])]
+    (or (get prelim aparams)
+        (get @(:cache mele) aparams)
+        (if-let [ele (first (elegible-candidates prelim aparams))]
+          (do (swap! (:cache mele) assoc aparams ele)
+              ele)))))
 
+(defn find-field-candidate [mele aparams]
+  (if-let [ele (get-in (:lookup mele) [:field 0 []])]
+    (and (or (= 0 (count aparams))
+             (and (= 1 (count aparams))
+                  (Util/paramArgTypeMatch (:type ele) (first aparams)))))))
 
-(defmethod invoke-element :multi [ele & args]
-  (or (invoke-method-multi ele args)
-      (invoke-field-multi ele args)
+(defn find-candidate [mele aparams]
+  (or (find-method-candidate mele aparams)
+      (find-field-candidate mele aparams)
       (throw (Exception. (format "Cannot find a suitable candidate function, need %s, invoked with %s."
-                                 (element-params ele)
+                                 (format-element mele)
                                  (mapv #(symbol (class-convert
                                                  (class %) :string))
-                                       args))))))
+                                       aparams))))))
+
+(defmethod invoke-element :multi [mele & args]
+  (let [aparams (mapv type args)
+        candidate (find-candidate mele aparams)]
+    (apply candidate args)))

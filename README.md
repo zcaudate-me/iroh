@@ -17,7 +17,7 @@ Although private and protected keywords have their uses in java, I'm beginning t
 - To be able to test methods and functions that are usually not testable, or very hard to test:
   - Make hidden class members visible by providing access to private methods and fields 
   - Make immutable class members flexible by providing ability to change final members (So that initial states can be set up easily)
-- Extract out class members into documented and executable functions
+- Extract out class members into documented and executable functions (including multi-argument functions)
 - Better understand jvm security and how to dodge it if needed
 - Better understand the java type system as well as clojure's own interface definitions
 - To make working with java fun again
@@ -27,11 +27,10 @@ Although private and protected keywords have their uses in java, I'm beginning t
 Add to project.clj dependencies:
 
 ```clojure
-[im.chit/iroh "0.1.5-SNAPSHOT"]
+[im.chit/iroh "0.1.5"]
 ```
 
 ## Work in Progress:
-- multi-method Invocation (when a method has the same name but more than one instance)
 - overridden method invocation (see  http://stackoverflow.com/questions/5411434/how-to-call-a-superclass-method-using-java-reflection)
 
 ## Usage
