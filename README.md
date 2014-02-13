@@ -1,11 +1,13 @@
 # iroh
 
+![Uncle Iroh](http://25.media.tumblr.com/tumblr_m6iy6uAXNT1r1vr9ro1_1280.jpg)
+
 > 'Even in the material world, you will find that if you look for the light, 
 >  You can often find it. But if you look for the dark, that is all you will
 >  ever see. Many things that seem threatening in the dark become welcoming 
 >  when we shine light on them.'
  
->  - Uncle Iroh, The Legend of Korra 
+>    Uncle Iroh, The Legend of Korra 
 
 Iroh is a library for jvm reflection. It is designed to be used for testing, repl based development, and blantant hacks bypassing the jvm security mechanism. When working and understanding badly written, poorly encapsulated code, I have found that the best way is to expose everything first, then to test each piece of functionality in a controlled way. Finally only when all the pieces are known, then work out a strategy for code refactoring/rewriting. 
 
