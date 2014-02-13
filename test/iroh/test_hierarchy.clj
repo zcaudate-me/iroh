@@ -36,4 +36,10 @@
 
   (origins (.getDeclaredMethod clojure.lang.APersistentMap "invoke"
                                (class-array Class [Object Object])))
-  => [clojure.lang.IFn clojure.lang.AFn clojure.lang.APersistentMap])
+  => [clojure.lang.IFn clojure.lang.AFn clojure.lang.APersistentMap]
+
+  (origins (.getDeclaredMethod String "charAt"
+                               (class-array Class [Integer/TYPE])))
+  => [CharSequence String]
+
+)

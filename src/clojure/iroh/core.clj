@@ -54,9 +54,7 @@
        ~@(map #(cons `iroh.core/>var %) (partition 2 more))]))
 
 (defmacro >ns
-  ([ns class] `(>ns ~ns identity))
-  ([ns class f] `(>ns ~ns ~f []))
-  ([ns class f selectors]
+  ([ns class & selectors]
      (let [home (.getName *ns*)
            eles (list-class-elements (resolve class) (args-convert selectors))
            syms (distinct (map :name eles))
@@ -165,99 +163,19 @@
 (defmacro .$ [method obj & args]
   `(apply-element ~obj ~(name method) ~(vec args)))
 
+
 (comment
-  (origins (:delegate (.? String "charAt" :#)))
-  (seq (.getInterfaces String))
-  (.? CharSequence)
-  (def direct-handle (.? java.lang.invoke.DirectMethodHandle "new" :#))
-  (def method-type (.? java.lang.invoke.MethodType "makeImpl" :#))
-  (def member-from-method (.? java.lang.invoke.MemberName "new"
-                              [java.lang.reflect.Method] :#))
-
-  (def obj-member-name
-    (member-from-method (:delegate (.? Object "toString" :#))))
-  (def obj-type (method-type String (class-array Class [Object]) true))
-  (def obj-handle (direct-handle obj-type obj-member-name false Object))
-  (invoke obj-handle 1) ;;=> "java.lang.Long@1"
-  (invoke obj-handle 100) ;;=> "java.lang.Long@64"
+  (.? (type {}) #{clojure.lang.IPersistentMap} :name)
+  (>refresh)
+  (.> {})
+  (.? (type {}) #{java.util.Map} :name)
 
 
-  (def member-name (.? java.lang.invoke.MemberName "new" [Class String java.lang.invoke.MethodType] :#))
-  (def str-type (method-type String (class-array Class [String]) true))
-  (def str-member-name
-    (member-from-method (:delegate (.? String "toString" :#))))
-  (def str-handle (direct-handle str-type str-member-name false String))
+  (.? java.util.Map :name)
 
-  (defn invoke [^java.lang.invoke.MethodHandle handle & args]
-    (.invokeWithArguments handle (object-array args)))
-
-  (invoke obj-handle "oeuoeu")
-  (invoke str-handle "oeuoeueo")
-
-  (java.lang.invoke.MethodType.)
-
-  (>pst)
-  (keys (object-lookup (test.A.)))
-
-  ((-> (instance-lookup sun.reflect.ReflectionFactory)
-        (get "langReflectAccess")
-        (:fields)))
+  (.* {} #{java.util.Map} :name)
 
 
-  (.$ toString)
 
-  (.$ without {:a 1} :a)
-
-  (get (get-element-lookup (.* {:a 1})) "toString")
-  (def handles-lu (java.lang.invoke.MethodHandles/lookup))
-  (.invoke (.unreflect handles-lu (:delegate (.? Object "equals" :#)))
-           (object-array ["1"]))
-
-  (def a 1)
-  (>pst)
-  ((.* a #{String}) a)
-  ((.* a #{Number} "shortValue"))
-  ((.? Integer  2 #(= "parseInt" (:name %))) "14" 10)
-  ((.? String "toCharArray" :#) "Oeuoeu")
-
-  (def acquire-accessor (.? java.lang.reflect.Method #"acquire" :#))
-  (.invoke (acquire-accessor (:delegate (.? test.A #"to" :#)))
-           (test.B.) (object-array 0))
-
-  (reimport 'im.chit.iroh.Util
-            'test.A
-            'test.B)
-  (Util/invokeMethod (:delegate (.? test.B #"to" :#)) test. (list (test.B.)))
-  (.findSpecial (java.lang.invoke.MethodHandles/lookup) A "toString" )
-
-  (.invokeWithArguments
-   (.findSpecial (java.lang.invoke.MethodHandles/lookup)
-                 A "toString" (java.lang.invoke.MethodType/methodType String)
-                 Object)
-   (to-array (test.B.)))
-
-  (def to-char-ar
-    ray (.? String "toCharArray" :#))
-
-  (to-char-array "oeuoeu")
-  ((.* "oueu" "toString" [String] :#) "oeuoeu")
-  ((.* "oueu" "toString" [Object] :#) "oeuoeu")
-
-  ((.? sun.reflect.NativeMethodAccessorImpl "invoke0" :#)
-   (:delegate (.? test.A #"to" :#))
-   (cast test.A (test.B.))
-   (object-array []))
-
-
-  (defn invoke-handle [^java.lang.invoke.MethodHandle handle args]
-    (.invokeWithArguments handle (object-array args)))
-
-  (invoke-handle (:handle (.? Object #"to" :#)) ["oeuo"])
-
-  (macroexpand-1 (>ns test.string String identity []))
-
-  (test.string/value "oeuoeu")
-  ((.? Object #"to" :#) (test.A.))
-  ((.? test.B #"to" :#) (test.B.))
-  ((.? test.A #"to" :#) (test.B.))
-  ((.? test.A #"to" :#) (test.A.)))
+  (.? clojure.lang.IPersistentMap :name)
+  )

@@ -47,12 +47,13 @@
   (format "#[%s :: %s]"
           (:name ele)
           (->> (:array ele)
-               (map (fn [ele] (apply list (:params ele))))
+               (map element-params)
+               (map (fn [params] (if (empty? params) [] (apply list params))))
                (sort (fn [x y] (compare (count x) (count y))))
                (clojure.string/join ", "))))
 
 (defmethod element-params :multi [ele]
-  (vec (mapcat element-params (:array ele))))
+  (map element-params (:array ele)))
 
 (defn invoke-method-multi [ele args]
   (let [argc (count args)

@@ -33,8 +33,8 @@
   (= (class-convert type) value))
 
 (defn has-origins? [origins value]
-  (if (some #(origins %) value)
-    true false))
+  (if (empty? (clojure.set/intersection origins (set value)))
+    false true))
 
 (defn filter-by
   ([f k grp eles]

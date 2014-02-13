@@ -21,4 +21,4 @@
   (format-element-method ele))
 
 (defmethod element-params :constructor [ele]
-  (list (element-params-method ele)))
+  (apply list (element-params-method ele)))

@@ -47,11 +47,54 @@ The api consists of the following macros:
   .$ - for reflective invocation of objects
 ```
 
-### `>ns` - Import as Namespace
-
 ### `>var` - Import as Var
 
+We can extract methods from a Class or interface with `>var`
+
+```clojure
+(>var hash-without [clojure.lang.IPersistentMap without]
+      hash-assoc [clojure.lang.IPersistentMap assoc])
+
+(clojure.repl/doc hash-without)
+;;=> -------------------------
+;;   midje-doc.iroh-walkthrough/hash-without
+;;   ([clojure.lang.PersistentArrayMap java.lang.Object])
+;;   ------------------
+;;
+;;   member: clojure.lang.PersistentArrayMap/without
+;;   type: clojure.lang.IPersistentMap
+;;   modifiers: instance, method, public
+
+(str hash-without)
+;; => "#[without :: (clojure.lang.PersistentArrayMap, java.lang.Object) -> clojure.lang.IPersistentMap]"
+
+(hash-without {:a 1 :b 2} :a)
+;; => {:b 2}
+
+(str hash-assoc)
+=> "#[assoc :: (clojure.lang.IPersistentMap, java.lang.Object, java.lang.Object) -> clojure.lang.IPersistentMap]"
+
+(hash-assoc {:a 1 :b 2} :c 3)
+;; => {:a 1 :b 2 :c 3}
+```
+
+### `>ns` - Import as Namespace
+We can extract an entire class into a namespace:
+
+(>ns test.string String :private)
+;; => [#'test.string/HASHING_SEED #'test.string/checkBounds
+;;     #'test.string/hash #'test.string/hash32
+;;     #'test.string/indexOfSupplementary
+;;     #'test.string/lastIndexOfSupplementary
+;;     #'test.string/serialPersistentFields #'test.string/serialVersionUID
+;;     #'test.string/value]
+
+(seq (test.string/value "hello"))
+;;=> (\h \e \l \l \o)
+
 ### Elements
+
+We review some properties of extracted elements:
 
 #### Application
 In the following example, We can assign functions to var `char-at`:
@@ -234,8 +277,6 @@ All the private non-static field names in String:
 (.? String :name :private :field :instance)
 ;;=> ["hash" "hash32" "value"]
 ```
-
-
 
 ## License
 

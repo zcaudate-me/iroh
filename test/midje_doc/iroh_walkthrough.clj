@@ -2,16 +2,34 @@
   (:require [iroh.core :refer :all]
             [iroh.hierarchy :refer :all]
             [midje.sweet :refer :all])
-  (:refer-clojure :exclude [.> .* .? .$ >ns >var])
   )
 
 [[:chapter {:title "Walkthrough"}]]
 
 "Say I wanted to test all methods for clojure.lang.PersistentHashMap"
 
-(>var EMPTY [clojure.lang.PersistentHashMap EMPTY])
+(>var hash-without [(type {}) without])
 
-;;(ns user.test)
+(clojure.repl/doc hash-without)
+;;=> -------------------------
+;;   midje-doc.iroh-walkthrough/hash-without
+;;   ([clojure.lang.PersistentArrayMap java.lang.Object])
+;;   ------------------
+;;
+;;   member: clojure.lang.PersistentArrayMap/without
+;;   type: clojure.lang.IPersistentMap
+;;   modifiers: instance, method, public
+
+(str hash-without)
+;; => "#[without :: (clojure.lang.PersistentArrayMap, java.lang.Object) -> clojure.lang.IPersistentMap]"
+
+(.? clojure.lang.IPersistentMap "without")
+
+
+(hash-without {:a 1 :b 2} :a)
+;; => {:b 2}
+
+
 
 [[:section {:title "Overview"}]]
 
@@ -121,7 +139,7 @@
             :static false
             :params [String Integer/TYPE]
             :type Character/TYPE
-            :delegate fn?}))
+            :delegate #(instance? java.lang.reflect.Method %)}))
 
 "Looking at `char-at` isn't really that interesting, a faster version of `char-at` can be specified much more easily:"
 
