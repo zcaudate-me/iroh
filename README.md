@@ -1,5 +1,7 @@
 # iroh
 
+[![Build Status](https://travis-ci.org/zcaudate/iroh.png?branch=master)](https://travis-ci.org/zcaudate/iroh)
+
 ![Uncle Iroh](http://25.media.tumblr.com/tumblr_m6iy6uAXNT1r1vr9ro1_1280.jpg)
 
 > 'Even in the material world, you will find that if you look for the light, 
