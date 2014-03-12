@@ -161,8 +161,15 @@
       (throw (Exception. "Element not Found.")))))
 
 (defmacro .$ [method obj & args]
-  `(apply-element ~obj ~(name method) ~(vec args)))
-
+  (cond (symbol? method)
+        `(apply-element ~obj ~(name method) ~(vec args))
+      
+        (vector? method)
+        `(vector 
+            ~@(map (fn [msym]
+                      `(.$ msym ~obj ~@args))
+                    method))
+      ))
 
 (comment
   (.? (type {}) #{clojure.lang.IPersistentMap} :name)
