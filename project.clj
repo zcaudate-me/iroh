@@ -5,7 +5,8 @@
             :url "http://http://opensource.org/licenses/MIT"}
   :java-source-paths ["src/java"]
   :source-paths ["src/clojure"]
-  :dependencies [[org.clojure/clojure "1.5.1"]]
+  :dependencies [[org.clojure/clojure "1.5.1"]
+                 [org.tcrawley/dynapath "0.2.3"]]
   :profiles {:dev {:dependencies [[midje "1.6.0"]]
                     :plugins [[lein-midje "3.1.3"]]}}
   :documentation {:files {"docs/index"

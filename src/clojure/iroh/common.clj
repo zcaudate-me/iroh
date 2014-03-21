@@ -1,6 +1,11 @@
 (ns iroh.common
   (:import im.chit.iroh.Util))
 
+(defmacro suppress [& body]
+  `(try
+     ~@body
+     (catch Throwable t#)))
+
 (defn hash-map? [x]
   (instance? clojure.lang.APersistentMap x))
 
@@ -81,3 +86,6 @@
   ([x f]
       (fn [v]
         (if-not v (f x) (conj v x)))))
+
+(defn context-class [obj]
+  (if (class? obj) obj (type obj)))

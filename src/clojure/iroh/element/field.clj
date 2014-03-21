@@ -1,5 +1,6 @@
 (ns iroh.element.field
-  (:require [iroh.types.element :refer :all]
+  (:require [iroh.common :refer [context-class]]
+            [iroh.types.element :refer :all]
             [iroh.element.common :refer [seed]]
             [iroh.pretty.classes :refer [class-convert]])
   (:import im.chit.iroh.Util))
@@ -12,8 +13,7 @@
       field)))
 
 (defn arg-params [ele access]
-  (let [args (if (:static ele)
-               [Class] [(:container ele)])]
+  (let [args [(:container ele)]]
     (condp = access
       :set (conj args (:type ele))
       :get args)))
@@ -24,7 +24,7 @@
                               (arg-params ~ele :get)
                               (arg-params ~ele :set)
                               (mapv #(symbol (class-convert
-                                              (class %) :string))
+                                              (context-class %) :string))
                                     ~args)))))
 
 (defn invoke-static-field

@@ -28,7 +28,7 @@
                           (= tag :constructor))
                     modifiers
                     (conj modifiers :instance))
-        _ (set-accessible obj true)]
+        _ (if (not= tag :class) (set-accessible obj true))]
     (-> {:name (.getName obj)
          :tag  tag
          :hash (.hashCode obj)
@@ -38,11 +38,12 @@
          :delegate obj}
         (add-annotations obj))))
 
-(defmacro throw-arg-exception [ele args]
-  `(throw (Exception. (format  "Method `%s` expects params to be of type %s, but was invoked with %s instead"
-                              (str (:name ~ele))
-                              (str (:params ~ele))
-                              (str (mapv type ~args))))))
+(defmacro throw-arg-exception [ele args & header]
+  `(throw (Exception. (format  "%sMethod `%s` expects params to be of type %s, but was invoked with %s instead"
+                               (if ~header ~header "")
+                               (str (:name ~ele))
+                               (str (:params ~ele))
+                               (str (mapv type ~args))))))
 
 (defn box-args [ele args]
   (let [params (:params ele)]
@@ -52,8 +53,9 @@
                 params
                 args)
            (catch im.chit.iroh.BoxException e
+             (println e)
              (throw-arg-exception ele args)))
-      (throw-arg-exception ele args))))
+      (throw-arg-exception ele args (format "ARGS: %s <-> %s, " (count params) (count args))))))
 
 (defn format-element-method [ele]
   (let [params (map #(class-convert % :string) (:params ele))]
@@ -64,3 +66,5 @@
 
 (defn element-params-method [ele]
   (mapv #(symbol (class-convert % :string)) (:params ele)))
+
+(.cast String nil)

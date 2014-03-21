@@ -10,8 +10,11 @@
 
 (def ^:dynamic *cache* (atom {}))
 
-(defmacro .> [obj & args]
-  `(let [t# (type ~obj)]
+(defmacro .% [obj]
+  `(iroh.element.common/seed :class (context-class ~obj)))
+
+(defmacro .%> [obj & args]
+  `(let [t# (context-class ~obj)]
      (vec (concat [t#] (base-list t#)))))
 
 (defn all-class-members [class]
@@ -29,8 +32,8 @@
        (->> (list-class-elements class)
             (display grp)))))
 
-(defmacro .? [class & selectors]
-  `(list-class-elements ~class ~(args-convert selectors)))
+(defmacro .? [obj & selectors]
+  `(list-class-elements (context-class ~obj) ~(args-convert selectors)))
 
 (defn element-meta [ele]
     (-> {}
@@ -150,7 +153,7 @@
 (defn apply-element [obj method args]
   (let [lu (get-element-lookup obj)]
     (if-let [ele (get lu method)]
-      (cond (:field ele)
+      (cond (-> ele :modifiers :field)
             (apply ele obj args)
 
             (:static ele)
@@ -158,21 +161,36 @@
 
             :else
             (apply ele obj args))
-      (throw (Exception. "Element not Found.")))))
+      (throw (Exception. (format "Class member not Found for %s - `%s`" (context-class obj) method))))))
 
-(defmacro .$ [method obj & args]
-  (cond (symbol? method)
-        `(apply-element ~obj ~(name method) ~(vec args))
-      
-        (vector? method)
-        `(vector 
-            ~@(map (fn [msym]
-                      `(.$ msym ~obj ~@args))
-                    method))
-      ))
+(defmacro .>
+  ([obj] obj)
+  ([obj method]
+     (cond (symbol? method)
+           `(.> ~obj (~method))
+
+           (list? method)
+           (let [[method & args] method]
+             (cond (#{'.* '.? '.% '.%>} method)
+                   `(~(symbol (str "iroh.core/" method)) ~obj ~@args)
+
+                   (.startsWith (name method) ".")
+                   `(apply-element ~obj ~(subs (name method) 1) ~(vec args))
+
+                   :else
+                   `(~method ~obj ~@args)
+                   ))))
+
+  ([obj method & more]
+     `(.> (.> ~obj ~method) ~@more)))
+
 
 (comment
-  (.? (type {}) #{clojure.lang.IPersistentMap} :name)
+  (.? (clojure.lang.DynamicClassLoader.))
+  (.* 1)
+  (:all (.* clojure.lang.DynamicClassLoader "rq" :#))
+  (.> (clojure.lang.DynamicClassLoader.) .%)
+
   (>refresh)
   (.> {})
   (.? (type {}) #{java.util.Map} :name)
