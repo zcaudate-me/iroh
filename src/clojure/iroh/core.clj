@@ -190,7 +190,7 @@
   (.* 1)
   (:all (.* clojure.lang.DynamicClassLoader "rq" :#))
   (.> (clojure.lang.DynamicClassLoader.) .%)
-
+  (.% (clojure.lang.DynamicClassLoader.))
   (>refresh)
   (.> {})
   (.? (type {}) #{java.util.Map} :name)
