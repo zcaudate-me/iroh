@@ -1,8 +1,8 @@
 (ns midje-doc.iroh-walkthrough
   (:require [iroh.core :refer :all]
             [iroh.hierarchy :refer :all]
-            [midje.sweet :refer :all]
-            :reload))
+            [midje.sweet :refer :all])
+  (:refer-clojure :exclude [.> .* .? .% .%> >ns >var]))
 
 [[:chapter {:title "Walkthrough"}]]
 
@@ -72,17 +72,17 @@
 
 "Instead of using `type` which only gives the parent class or `ancestors` which gives all base classes and interfaces in a set, An object's hierachy can been presented using `.`*>*:"
 (facts
-  (.> 1)
+  (.%> 1)
   => [java.lang.Long
       [java.lang.Number #{java.lang.Comparable}]
       [java.lang.Object #{java.io.Serializable}]]
 
-  (.> "hello")
+  (.%> "hello")
   => [java.lang.String
       [java.lang.Object #{java.lang.CharSequence
                           java.io.Serializable
                           java.lang.Comparable}]]
-  (.> {})
+  (.%> {})
   => [clojure.lang.PersistentArrayMap
       [clojure.lang.APersistentMap #{clojure.lang.IObj
                                      clojure.lang.IEditableCollection}]

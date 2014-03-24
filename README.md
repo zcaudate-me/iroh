@@ -11,6 +11,29 @@
  
 >    Uncle Iroh, The Legend of Korra 
 
+## Whats New
+
+#### 0.1.6
+Changed syntax: 
+
+  - `.$` to `.>`   (threading macro)
+  - `.>` to `.%>`  (display class hierachy)
+  - Added `.%`     (display class info)
+  - Now `.?`, `.%` and `.%>` works both on classes and instances
+
+## Installation
+
+Add to project.clj dependencies:
+
+```clojure
+[im.chit/iroh "0.1.6"]
+```
+
+## Work in Progress:
+- overridden method invocation (see  http://stackoverflow.com/questions/5411434/how-to-call-a-superclass-method-using-java-reflection)
+  
+## Motivation
+
 Iroh is a library for jvm reflection. It is designed to be used for testing, repl based development, and blantant hacks bypassing the jvm security mechanism. When working and understanding badly written, poorly encapsulated code, I have found that the best way is to expose everything first, then to test each piece of functionality in a controlled way. Finally only when all the pieces are known, then work out a strategy for code refactoring/rewriting. 
 
 Although private and protected keywords have their uses in java, I'm beginning to think of them as functionality obsfucators. They are complete hinderences when I am trying to do something to the code base that the previous author had not intended for me to do - one of them being to understand what is going on underneath. If the previous author had taken shortcuts in design, those private keywords turn one of those over-protective parents that get in the way of the growth of their children. Taking inspiration from clj-wallhack, here are some primary use cases for the library:   
@@ -23,17 +46,6 @@ Although private and protected keywords have their uses in java, I'm beginning t
 - Better understand jvm security and how to dodge it if needed
 - Better understand the java type system as well as clojure's own interface definitions
 - To make working with java fun again
-
-## Installation
-
-Add to project.clj dependencies:
-
-```clojure
-[im.chit/iroh "0.1.5"]
-```
-
-## Work in Progress:
-- overridden method invocation (see  http://stackoverflow.com/questions/5411434/how-to-call-a-superclass-method-using-java-reflection)
 
 ## Usage
 
@@ -48,10 +60,11 @@ The api consists of the following macros:
 ```clojure
   >ns - for importing object elements into a namespace
   >var - for importing elements into current namespace
-  .> - for showing type hierarchy
+  .% - for showing class properties
+  .%> - for showing type hierarchy
   .? - for showing class elements
   .* - for showing instance elements
-  .$ - for reflective invocation of objects
+  .> - threading macro for reflective invocation of objects
 ```
 
 ### `>var` - Import as Var
@@ -194,21 +207,21 @@ The element can now be used, just like a normal function:
 ```
 
 
-### `.>` - Type Hierarchy
+### `.%>` - Type Hierarchy
 
 ```clojure
-(.> 1)
+(.%> 1)
 ;;=> [java.lang.Long
 ;;    [java.lang.Number #{java.lang.Comparable}]
 ;;    [java.lang.Object #{java.io.Serializable}]]
 
-(.> "hello")
+(.%> "hello")
 ;;=> [java.lang.String
 ;;    [java.lang.Object #{java.lang.CharSequence
 ;;                        java.io.Serializable
 ;;                        java.lang.Comparable}]]
 
-(.> {})
+(.%> {})
 ;;=> [clojure.lang.PersistentArrayMap
 ;;    [clojure.lang.APersistentMap #{clojure.lang.IObj
 ;;                                   clojure.lang.IEditableCollection}]
@@ -287,12 +300,12 @@ All the private non-static field names in String:
 ```
 
 
-### `.$` - Application
-A shorthand way of accessing private field is done by using .$:
+### `.>` - Application
+A shorthand way of accessing private field is done by using .>:
 
 ```clojure
 (def a "hello")
-(.$ value a (char-array "world"))
+(.> a value (char-array "world"))
 a ;;=> "world"
 ```
 

@@ -6,7 +6,7 @@
             [iroh.pretty.args :refer [args-convert args-group]]
             [iroh.pretty.display :refer [display]]
             [iroh.element multi method field constructor])
-  (:refer-clojure :exclude [.> .* .? .$ >ns >var]))
+  (:refer-clojure :exclude [.> .* .? .% .%> >ns >var]))
 
 (def ^:dynamic *cache* (atom {}))
 

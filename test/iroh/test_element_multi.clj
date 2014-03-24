@@ -1,7 +1,8 @@
 (ns iroh.test-element-multi
   (:use midje.sweet)
   (:require [iroh.core :refer :all]
-            [iroh.types.element :refer :all]))
+            [iroh.types.element :refer :all])
+  (:refer-clojure :exclude [.> .* .? .% .%> >ns >var]))
   
 (fact "multiple argument types" 
   ((.? String "new" :#) "hello")

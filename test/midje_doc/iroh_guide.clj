@@ -1,7 +1,7 @@
 (ns midje-doc.iroh-guide
   (:require [iroh.core :refer :all]
             [midje.sweet :refer :all])
-  (:refer-clojure :exclude [.> .* .? .$ >ns >var]))
+  (:refer-clojure :exclude [.> .* .? .% .%> >ns >var]))
 
 [[:chapter {:title "Overview"}]]
 
