@@ -192,6 +192,10 @@
      `(.> (.> ~obj ~method) ~@more)))
 
 (deftype Delegate [pointer fields]
+  Object
+  (toString [self]
+    (format "%s@%s %s" (.getName (type pointer)) (.hashCode pointer) (self)))
+
   clojure.lang.ILookup
   (valAt [self key]
     (if-let [f (get fields key)]
@@ -212,7 +216,7 @@
   (invoke [self key value]
     (if-let [f (get fields key)]
       (f pointer value))
-    pointer))
+    self))
 
 (defn delegate [obj]
     (let [fields (->> (map (juxt (comp keyword :name) identity) (.* obj :field))
@@ -223,7 +227,7 @@
   (>refresh)
   (def a "oeuoeuoeu")
   (def >a (delegate a))
-
+  (println >a)
   (.> [1 2 3 4] :root)
   (println ((delegate [1 2 3 4])))
   (.length (char-array 2))
