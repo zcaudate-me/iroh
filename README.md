@@ -37,7 +37,7 @@ Add to project.clj dependencies:
 For working in the repl or emacs, inject the core functionality into your `clojure.core` namespace using [vinyasa](https://github.com/zcaudate/vinyasa) by adding the following to your `~/.lein/profiles.clj` file:
 
 ```clojure
-{:user {:dependencies [[im.chit/iroh "0.1.8"]
+{:user {:dependencies [[im.chit/iroh "0.1.9"]
                        [im.chit/vinyasa "0.2.0"]]
          :injections [(require 'vinyasa.inject)
                       ....
