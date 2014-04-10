@@ -91,7 +91,7 @@ The api consists of the following macros:
 
 ### `delegate` - Transparent Bean 
 
-Delegate does what bean does but it actually allows field access to the underlying object. This way, one can set and get values from the object :
+Delegate does what bean does but it actually allows transparent field access to the underlying object. This way, one can set and get values from any object, regardless of permission model (private, protected, etc...):
 
 ```clojure
 (def a "hello")
