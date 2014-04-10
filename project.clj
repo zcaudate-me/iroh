@@ -1,4 +1,4 @@
-(defproject im.chit/iroh "0.1.6"
+(defproject im.chit/iroh "0.1.7-SNAPSHOT"
   :description "simple class reflection"
   :url "http://www.github.com/zcaudate/iroh"
   :license {:name "The MIT License"
@@ -7,7 +7,7 @@
   :source-paths ["src/clojure"]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.tcrawley/dynapath "0.2.3"]]
-  :profiles {:dev {:dependencies [[midje "1.6.0"]]
+  :profiles {:dev {:dependencies [[midje "1.6.3"]]
                     :plugins [[lein-midje "3.1.3"]]}}
   :documentation {:files {"docs/index"
                          {:input "test/midje_doc/iroh_guide.clj"

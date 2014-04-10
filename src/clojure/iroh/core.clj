@@ -166,7 +166,7 @@
 (defmacro .>
   ([obj] obj)
   ([obj method]
-     (cond (symbol? method)
+     (cond (not (list? method))
            `(.> ~obj (~method))
 
            (list? method)
@@ -174,8 +174,15 @@
              (cond (#{'.* '.? '.% '.%>} method)
                    `(~(symbol (str "iroh.core/" method)) ~obj ~@args)
 
-                   (.startsWith (name method) ".")
+                   (and (symbol? method) (.startsWith (name method) "."))
                    `(apply-element ~obj ~(subs (name method) 1) ~(vec args))
+
+                   (keyword? method)
+                   `(or (~method ~obj ~@args)
+                        (let [nm# ~(subs (str method) 1)]
+                          (println nm#)
+                          (if (some #(= % nm#) (.* ~obj :name))
+                            (apply-element ~obj nm# ~(vec args)))))
 
                    :else
                    `(~method ~obj ~@args)
@@ -184,6 +191,54 @@
   ([obj method & more]
      `(.> (.> ~obj ~method) ~@more)))
 
+(deftype Delegate [pointer fields]
+  clojure.lang.ILookup
+  (valAt [self key]
+    (if-let [f (get fields key)]
+      (f pointer)))
+  (valAt [self key not-found]
+    (if-let [f (get fields key)]
+      (f pointer)
+      not-found))
+
+  clojure.lang.IFn
+  (invoke [self]
+    (->> fields
+         (map (fn [[k f]]
+                [k (f pointer)]))
+         (into {})))
+  (invoke [self key]
+    (.valAt self key))
+  (invoke [self key value]
+    (if-let [f (get fields key)]
+      (f pointer value))
+    pointer))
+
+(defn delegate [obj]
+    (let [fields (->> (map (juxt (comp keyword :name) identity) (.* obj :field))
+                      (into {}))]
+      (Delegate. obj fields)))
+
+(comment
+  (>refresh)
+  (def a "oeuoeuoeu")
+  (def >a (delegate a))
+
+  (.> [1 2 3 4] :root)
+  (println ((delegate [1 2 3 4])))
+  (.length (char-array 2))
+  (>source alength)
+
+  ;;(println ((.? String "value" :#) a (char-array "OEUOEUOEUOEUOUOEU")))
+  (>a :value (char-array "aoeuaoeuoaeuaoeuoaeu"))
+
+
+
+  (.? clojure.lang.ILookup)
+
+
+  (->> (map (juxt (comp keyword :name) identity) (.* {} :field))
+       (into {})))
 
 (comment
   (.? (clojure.lang.DynamicClassLoader.))
