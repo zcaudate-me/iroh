@@ -191,10 +191,23 @@
   ([obj method & more]
      `(.> (.> ~obj ~method) ~@more)))
 
+
 (deftype Delegate [pointer fields]
   Object
   (toString [self]
-    (format "%s@%s %s" (.getName (type pointer)) (.hashCode pointer) (self)))
+    (format "<%s@%s %s>" (.getName (type pointer)) (.hashCode pointer) (self)))
+
+  clojure.lang.IDeref
+  (deref [self]
+    (self))
+
+  java.util.Map
+  (equals [self other] (= (self) other))
+  (size [self] (count fields))
+  (keySet [self] (keys fields))
+  (entrySet [self] (set (map (fn [[k f]] (clojure.lang.MapEntry. k (f pointer))) fields)))
+  (containsKey [self key] (contains? fields key))
+  (values [self] (map (fn [f] (f pointer)) (vals fields)))
 
   clojure.lang.ILookup
   (valAt [self key]
@@ -223,11 +236,20 @@
                       (into {}))]
       (Delegate. obj fields)))
 
+(defmethod print-method Delegate
+  [v w] (.write w (str v)))
+
 (comment
+  (.? clojure.lang.MapEntry)
+  (-> {:a 1} first type)
   (>refresh)
-  (def a "oeuoeuoeu")
+  (def a "hello")
+
   (def >a (delegate a))
+  (println (:hash >a))
+  (keys >a)
   (println >a)
+
   (.> [1 2 3 4] :root)
   (println ((delegate [1 2 3 4])))
   (.length (char-array 2))

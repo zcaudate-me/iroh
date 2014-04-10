@@ -13,6 +13,11 @@
 
 ## Whats New
 
+#### 0.1.9
+
+  - `.>` macro now supports both `.accessors` and `:accessor` calls
+  - `delegate` added for better object support
+
 #### 0.1.6
 Changed syntax: 
 
@@ -26,8 +31,23 @@ Changed syntax:
 Add to project.clj dependencies:
 
 ```clojure
-[im.chit/iroh "0.1.6"]
+[im.chit/iroh "0.1.9"]
 ```
+
+For working in the repl or emacs, inject the core functionality into your `clojure.core` namespace using [vinyasa](https://github.com/zcaudate/vinyasa) by adding the following to your `~/.lein/profiles.clj` file:
+
+```clojure
+{:user {:dependencies [[im.chit/iroh "0.1.8"]
+                       [im.chit/vinyasa "0.2.0"]]
+         :injections [(require 'vinyasa.inject)
+                      ....
+                      
+                      (vinyasa.inject/inject 'clojure.core
+                        '[[iroh.core delegate >ns >var .> .? .* .% .%>]])
+                      
+                      ....]}}
+```
+
 
 ## Work in Progress:
 - overridden method invocation (see  http://stackoverflow.com/questions/5411434/how-to-call-a-superclass-method-using-java-reflection)
@@ -47,6 +67,7 @@ Although private and protected keywords have their uses in java, I'm beginning t
 - Better understand the java type system as well as clojure's own interface definitions
 - To make working with java fun again
 
+
 ## Usage
 
 Main functionality is accessed through:
@@ -58,6 +79,7 @@ Main functionality is accessed through:
 The api consists of the following macros:
 
 ```clojure
+  delegate - for transparency into objects
   >ns - for importing object elements into a namespace
   >var - for importing elements into current namespace
   .% - for showing class properties
@@ -66,6 +88,25 @@ The api consists of the following macros:
   .* - for showing instance elements
   .> - threading macro for reflective invocation of objects
 ```
+
+### `delegate` - Transparent Bean 
+
+Delegate does what bean does but it actually allows field access to the underlying object. This way, one can set and get values from the object :
+
+  (def a "hello")
+  a  ;;=> "hello" 
+  
+  (def >a (delegate a))
+  >a ;;=> <java.lang.String@99162322 {:hash 99162322, :hash32 0, :value #<char[] [C@202cf33f>}>
+
+  @>a          ;;=> {:hash 99162322, :hash32 0, :value #<char[] [C@202cf33f>}
+  (keys >a)    ;;=> (:value :hash :hash32)
+  (>a :hash)   ;;=> 99162322
+  (:hash32 >a) ;;=> 0  
+  (>a :value (char-array "world")) ;;=> "world"
+  
+  a ;;=> "world" (But I thought string where immutable!)
+
 
 ### `>var` - Import as Var
 
@@ -300,12 +341,13 @@ All the private non-static field names in String:
 ```
 
 
-### `.>` - Application
-A shorthand way of accessing private field is done by using .>:
+### `.>` - Threading
+A shorthand way of accessing private field is done by using `.>`:
 
 ```clojure
 (def a "hello")
-(.> a value (char-array "world"))
+(.> a :value) ;=> #<char[] [C@753f827a>
+(.> a (:value (char-array "world")))
 a ;;=> "world"
 ```
 
