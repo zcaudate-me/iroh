@@ -93,20 +93,21 @@ The api consists of the following macros:
 
 Delegate does what bean does but it actually allows field access to the underlying object. This way, one can set and get values from the object :
 
-  (def a "hello")
-  a  ;;=> "hello" 
-  
-  (def >a (delegate a))
-  >a ;;=> <java.lang.String@99162322 {:hash 99162322, :hash32 0, :value #<char[] [C@202cf33f>}>
+```clojure
+(def a "hello")
+a  ;;=> "hello" 
 
-  @>a          ;;=> {:hash 99162322, :hash32 0, :value #<char[] [C@202cf33f>}
-  (keys >a)    ;;=> (:value :hash :hash32)
-  (>a :hash)   ;;=> 99162322
-  (:hash32 >a) ;;=> 0  
-  (>a :value (char-array "world")) ;;=> "world"
-  
-  a ;;=> "world" (But I thought string where immutable!)
+(def >a (delegate a))
+>a ;;=> <java.lang.String@99162322 {:hash 99162322, :hash32 0, :value #<char[] [C@202cf33f>}>
 
+@>a          ;;=> {:hash 99162322, :hash32 0, :value #<char[] [C@202cf33f>}
+(keys >a)    ;;=> (:value :hash :hash32)
+(>a :hash)   ;;=> 99162322
+(:hash32 >a) ;;=> 0  
+(>a :value (char-array "world")) ;;=> "world"
+
+a ;;=> "world" (But I thought string where immutable!)
+```
 
 ### `>var` - Import as Var
 
