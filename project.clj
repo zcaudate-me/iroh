@@ -1,4 +1,4 @@
-(defproject im.chit/iroh "0.1.9"
+(defproject im.chit/iroh "0.1.10"
   :description "simple class reflection"
   :url "http://www.github.com/zcaudate/iroh"
   :license {:name "The MIT License"

@@ -1,5 +1,6 @@
 (ns iroh.types.element
-  (:require [iroh.common :refer :all]))
+  (:require [iroh.common :refer :all]
+            [clojure.walk :as walk]))
 
 (defmacro invoke-element* [x & args]
   `(invoke-element ~x ~@args))

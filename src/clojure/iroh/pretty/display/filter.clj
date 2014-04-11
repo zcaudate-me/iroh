@@ -1,5 +1,6 @@
 (ns iroh.pretty.display.filter
-  (:require [iroh.common :refer :all]
+  (:require [clojure.set :as set]
+            [iroh.common :refer :all]
             [iroh.pretty.classes :refer [class-convert]]))
 
 (defn has-predicate? [f value]
@@ -33,7 +34,7 @@
   (= (class-convert type) value))
 
 (defn has-origins? [origins value]
-  (if (empty? (clojure.set/intersection origins (set value)))
+  (if (empty? (set/intersection origins (set value)))
     false true))
 
 (defn filter-by

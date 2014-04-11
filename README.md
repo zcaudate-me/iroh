@@ -13,7 +13,7 @@
 
 ## Whats New
 
-#### 0.1.9
+#### 0.1.10
 
   - `.>` macro now supports both `.accessors` and `:accessor` calls
   - `delegate` added for better object support
@@ -31,13 +31,13 @@ Changed syntax:
 Add to project.clj dependencies:
 
 ```clojure
-[im.chit/iroh "0.1.9"]
+[im.chit/iroh "0.1.10"]
 ```
 
 For working in the repl or emacs, inject the core functionality into your `clojure.core` namespace using [vinyasa](https://github.com/zcaudate/vinyasa) by adding the following to your `~/.lein/profiles.clj` file:
 
 ```clojure
-{:user {:dependencies [[im.chit/iroh "0.1.9"]
+{:user {:dependencies [[im.chit/iroh "0.1.10"]
                        [im.chit/vinyasa "0.2.0"]]
          :injections [(require 'vinyasa.inject)
                       ....
@@ -47,7 +47,6 @@ For working in the repl or emacs, inject the core functionality into your `cloju
                       
                       ....]}}
 ```
-
 
 ## Work in Progress:
 - overridden method invocation (see  http://stackoverflow.com/questions/5411434/how-to-call-a-superclass-method-using-java-reflection)
@@ -106,7 +105,7 @@ a  ;;=> "hello"
 (:hash32 >a) ;;=> 0  
 (>a :value (char-array "world")) ;;=> "world"
 
-a ;;=> "world" (But I thought string where immutable!)
+a ;;=> "world" (But I thought strings where immutable!)
 ```
 
 ### `>var` - Import as Var
