@@ -12,9 +12,5 @@
   => "hello"
   
   ((.? String "new" :#) 1)
-  => (throws Exception)
-  
-  
-  
-  )
+=> (throws Exception))
   

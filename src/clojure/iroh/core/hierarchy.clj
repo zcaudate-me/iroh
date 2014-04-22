@@ -3,9 +3,15 @@
             [iroh.element.common :as element]
             [iroh.hierarchy :as hierarchy]))
 
-(defmacro .% [obj]
+(defmacro .%
+  ".%"
+  {:added "0.1.10"}
+  [obj]
   `(element/seed :class (common/context-class ~obj)))
 
-(defmacro .%> [obj & args]
+(defmacro .%>
+  ".%>"
+  {:added "0.1.10"}
+  [obj & args]
   `(let [t# (common/context-class ~obj)]
      (vec (concat [t#] (hierarchy/base-list t#)))))

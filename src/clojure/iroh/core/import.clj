@@ -8,7 +8,10 @@
             [iroh.core.query-class :as q])
   (:refer-clojure :exclude [>ns >var]))
 
-(defn element-meta [ele]
+(defn element-meta
+  "element-meta"
+  {:added "0.1.10"}
+  [ele]
     (-> {}
         (assoc :arglists (concat (element/element-params ele)))
         (assoc :doc
@@ -20,6 +23,8 @@
                     (string/join ", " (map name (:modifiers ele))))))))
 
 (defmacro >var
+  ">var"
+  {:added "0.1.10"}
   ([name [class method & selectors]]
      `(let [var (def ~name (q/.? ~class ~(str method) ~@selectors :#))]
         (alter-meta! var
@@ -30,6 +35,8 @@
        ~@(map #(cons `iroh.core.import/>var %) (partition 2 more))]))
 
 (defmacro >ns
+  ">ns"
+  {:added "0.1.10"}
   ([ns class & selectors]
      (let [home (.getName *ns*)
            eles (q/list-class-elements (resolve class) (args/args-convert selectors))

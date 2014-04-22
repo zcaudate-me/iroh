@@ -4,7 +4,10 @@
             [iroh.element multi method field constructor]
             [iroh.core.query-instance :as q]))
 
-(defn instance-lookup-path [ele]
+(defn instance-lookup-path
+  "instance-lookup-path"
+  {:added "0.1.10"}
+  [ele]
   (let [base [(:name ele)
               (:tag ele)]]
     (cond (= (:tag ele) :field)
@@ -14,13 +17,18 @@
           (let [params (:params ele)]
             (conj base (count params) params)))))
 
-(defn assignable? [current base]
+(defn assignable?
+  "assignable?"
+  {:added "0.1.10"}
+  [current base]
   (->> (map (fn [x y]
               (or (= y x)
                   (.isAssignableFrom y x))) current base)
        (every? identity)))
 
 (defn instance-lookup
+  "instance-lookup"
+  {:added "0.1.10"}
   ([tcls] (instance-lookup tcls nil))
   ([tcls icls]
      (reduce (fn [m ele]
@@ -34,11 +42,17 @@
                  (assoc-in m (instance-lookup-path ele) ele)))
              {} (q/all-instance-elements tcls icls))))
 
-(defn object-lookup [obj]
+(defn object-lookup
+  "object-lookup"
+  {:added "0.1.10"}
+  [obj]
   (let [tcls (type obj)]
     (instance-lookup tcls (if (class? obj) obj))))
 
-(defn refine-lookup [lu]
+(defn refine-lookup
+  "refine-lookup"
+  {:added "0.1.10"}
+  [lu]
   (let [ks (keys lu)]
     (reduce (fn [m k]
               (let [l1 (get lu k)
@@ -52,13 +66,19 @@
                   )))
             {} ks)))
 
-(defn apply-vector [obj [class method] args]
+(defn apply-vector
+  "apply-vector"
+  {:added "0.1.10"}
+  [obj [class method] args]
   (let [lu (refine-lookup (instance-lookup class nil))]
     (if-let [ele (get lu method)]
       "Apply Vector"
       (throw (Exception. "Element not Found.")))))
 
-(defn get-element-lookup [obj]
+(defn get-element-lookup
+  "get-element-lookup"
+  {:added "0.1.10"}
+  [obj]
   (let [obj-type (type obj)
         is-class   (if (class? obj) obj)]
     (if-let [lu (get-in @common/*cache* [obj-type is-class])]
@@ -68,7 +88,10 @@
                         (assoc-in m [obj-type is-class] lu)))
         lu))))
 
-(defn apply-element [obj method args]
+(defn apply-element
+  "apply-element"
+  {:added "0.1.10"}
+  [obj method args]
   (let [lu (get-element-lookup obj)]
     (if-let [ele (get lu method)]
       (cond (-> ele :modifiers :field)
@@ -82,6 +105,8 @@
       (throw (Exception. (format "Class member not Found for %s - `%s`" (common/context-class obj) method))))))
 
 (defmacro .>
+  ".>"
+  {:added "0.1.10"}
   ([obj] obj)
   ([obj method]
      (cond (not (list? method))

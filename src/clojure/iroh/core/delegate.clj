@@ -40,7 +40,10 @@
       (f pointer value))
     self))
 
-(defn delegate [obj]
+(defn delegate
+  "delegate"
+  {:added "0.1.10"}
+  [obj]
     (let [fields (->> (map (juxt (comp keyword :name) identity) (q/.* obj :field))
                       (into {}))]
       (Delegate. obj fields)))

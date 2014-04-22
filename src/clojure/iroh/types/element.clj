@@ -2,18 +2,33 @@
   (:require [iroh.common :refer :all]
             [clojure.walk :as walk]))
 
-(defmacro invoke-element* [x & args]
-  `(invoke-element ~x ~@args))
+            (defmulti invoke-element
+  "invoke-element"
+  {:added "0.1.10"}
+  (fn [x & args] (:tag x)))
 
-(defmulti invoke-element (fn [x & args] (:tag x)))
+(defmulti invoke-element
+  "invoke-element"
+  {:added "0.1.10"}
+  (fn [x & args] (:tag x)))
 
-(defmulti to-element (fn [obj] (type obj)))
+(defmulti to-element
+  "to-element"
+  {:added "0.1.10"}
+  type)
 
-(defmulti element-params (fn [ele] (:tag ele)))
+(defmulti element-params
+  "element-params"
+  {:added "0.1.10"}
+  :tag)
 
-(defmulti format-element (fn [ele] (:tag ele)))
+(defmulti format-element
+  "format-element"
+  {:added "0.1.10"}
+  :tag)
 
-(defn make-invoke-element-form [args]
+(defn make-invoke-element-form
+  [args]
   (clojure.walk/postwalk
    (fn [x]
      (cond (and (list? x)
@@ -26,7 +41,8 @@
    '(invoke [ele]
             (invoke-element ele))))
 
-(defmacro init-element-type [n]
+(defmacro init-element-type
+  [n]
   (concat
    '(deftype Element [body]
       java.lang.Object
@@ -50,10 +66,16 @@
 
 (init-element-type 20)
 
-(defn element [body]
+(defn element
+  "element"
+  {:added "0.1.10"}
+  [body]
   (Element. body))
 
-(defn element? [x]
+(defn element?
+  "element?"
+  {:added "0.1.10"}
+  [x]
   (instance? Element x))
 
 (defmethod print-method Element [v w]

@@ -3,41 +3,70 @@
             [iroh.common :refer :all]
             [iroh.pretty.classes :refer [class-convert]]))
 
-(defn has-predicate? [f value]
+(defn has-predicate?
+  "has-predicate?"
+  {:added "0.1.10"}
+  [f value]
   (f value))
 
-(defn has-name? [name value]
+(defn has-name?
+  "has-name?"
+  {:added "0.1.10"}
+  [name value]
   (cond (regex? name)
         (not (nil? (re-find name value)))
 
         (string? name)
         (= name value)))
 
-(defn has-modifier? [modifier value]
+(defn has-modifier?
+  "has-modifier?"
+  {:added "0.1.10"}
+  [modifier value]
   (contains? value modifier))
 
-(defn has-params? [params value]
+(defn has-params?
+  "has-params?"
+  {:added "0.1.10"}
+  [params value]
   (= (mapv class-convert params) value))
 
-(defn has-num-params? [num-params value]
+(defn has-num-params?
+  "has-num-params?"
+  {:added "0.1.10"}
+  [num-params value]
   (= num-params (count value)))
 
-(defn has-any-params? [any-params value]
+(defn has-any-params?
+  "has-any-params?"
+  {:added "0.1.10"}
+  [any-params value]
   (if (some #((set (map class-convert (next any-params))) %) value)
     true false))
 
-(defn has-all-params? [all-params value]
+(defn has-all-params?
+  "has-all-params?"
+  {:added "0.1.10"}
+  [all-params value]
   (if (every? #((set value) %) (map class-convert (next all-params)))
     true false))
 
-(defn has-type? [type value]
+(defn has-type?
+  "has-type?"
+  {:added "0.1.10"}
+  [type value]
   (= (class-convert type) value))
 
-(defn has-origins? [origins value]
+(defn has-origins?
+  "has-origins?"
+  {:added "0.1.10"}
+  [origins value]
   (if (empty? (set/intersection origins (set value)))
     false true))
 
 (defn filter-by
+  "filter-by"
+  {:added "0.1.10"}
   ([f k grp eles]
      (filter-by f k grp k eles))
   ([f kg grp ke eles]
@@ -47,7 +76,10 @@
                eles)
        eles)))
 
-(defn filter-terms-fn [grp]
+(defn filter-terms-fn
+  "filter-terms-fn"
+  {:added "0.1.10"}
+  [grp]
   (fn [eles]
     (->> eles
          (filter-by has-name?       :name grp)

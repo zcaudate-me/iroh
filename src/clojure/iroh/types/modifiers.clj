@@ -1,32 +1,32 @@
 (ns iroh.types.modifiers)
 
 (def flags
-  {:plain          2r000000000000
-   :public         2r000000000001    ;; java.lang.reflect.Modifier/PUBLIC
-   :private        2r000000000010    ;; java.lang.reflect.Modifier/PRIVATE
-   :protected      2r000000000100    ;; java.lang.reflect.Modifier/PROTECTED
-   :static         2r000000001000    ;; java.lang.reflect.Modifier/STATIC
-   :final          2r000000010000    ;; java.lang.reflect.Modifier/FINAL
-   :synchronized   2r000000100000    ;; java.lang.reflect.Modifier/SYNCHRONIZE
+  {:plain          0
+   :public         1      ;; java.lang.reflect.Modifier/PUBLIC
+   :private        2      ;; java.lang.reflect.Modifier/PRIVATE
+   :protected      4      ;; java.lang.reflect.Modifier/PROTECTED
+   :static         8      ;; java.lang.reflect.Modifier/STATIC
+   :final          16     ;; java.lang.reflect.Modifier/FINAL
+   :synchronized   32     ;; java.lang.reflect.Modifier/SYNCHRONIZE
 
-   :native         2r000100000000    ;; java.lang.reflect.Modifier/NATIVE
-   :interface      2r001000000000    ;; java.lang.reflect.Modifier/INTERFACE
-   :abstract       2r010000000000    ;; java.lang.reflect.Modifier/ABSTRACT
-   :strict         2r100000000000    ;; java.lang.reflect.Modifier/STRICT
+   :native         256    ;; java.lang.reflect.Modifier/NATIVE
+   :interface      512    ;; java.lang.reflect.Modifier/INTERFACE
+   :abstract       1024   ;; java.lang.reflect.Modifier/ABSTRACT
+   :strict         2048   ;; java.lang.reflect.Modifier/STRICT
 
-   :synthetic      0x1000        ;; java.lang.Class/SYNTHETIC
-   :annotation     0x2000        ;; java.lang.Class/ANNOTATION
-   :enum           0x4000        ;; java.lang.Class/ENUM
+   :synthetic      4096   ;; java.lang.Class/SYNTHETIC
+   :annotation     8192   ;; java.lang.Class/ANNOTATION
+   :enum           16384  ;; java.lang.Class/ENUM
    })
 
 (def field-flags
-  {:volatile       2r000001000000    ;; java.lang.reflect.Modifier/VOLATILE
-   :transient      2r000010000000    ;; java.lang.reflect.Modifier/TRANSIENT
+  {:volatile       64    ;; java.lang.reflect.Modifier/VOLATILE
+   :transient      128    ;; java.lang.reflect.Modifier/TRANSIENT
    })
 
 (def method-flags
-  {:bridge         2r000001000000    ;; java.lang.reflect.Modifier/BRIDGE
-   :varargs        2r000010000000    ;; java.lang.reflect.Modifier/VARARGS
+  {:bridge         64    ;; java.lang.reflect.Modifier/BRIDGE
+   :varargs        128    ;; java.lang.reflect.Modifier/VARARGS
    })
 
 (defn- get-modifiers
@@ -38,6 +38,17 @@
                (conj output k)))))
 
 (defn int-to-modifiers
+  "converts the modifier integer into human readable represenation
+
+  (int-to-modifiers 12)
+  => #{:protected :static}
+
+  (int-to-modifiers 128 :field)
+  => #{:transient}
+
+  (int-to-modifiers 128 :method)
+  => #{:varargs}"
+  {:added "0.1.10"}
   ([int] (int-to-modifiers int nil))
   ([int method]
      (let [output (get-modifiers int (seq flags) #{})]
@@ -47,6 +58,14 @@
          output))))
 
 (defn modifiers-to-int
+  "converts the human readable represenation of modifiers into an int
+
+  (modifiers-to-int #{:protected :static})
+  => 12
+
+  (modifiers-to-int #{:transient :field})
+  => 128"
+  {:added "0.1.10"}
   [modifiers]
   (reduce (fn [i x]
             (bit-or i (or (get flags x)
