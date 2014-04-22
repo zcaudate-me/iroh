@@ -1,5 +1,6 @@
 (ns iroh.hierarchy
-  (:require [iroh.common :refer :all]))
+  (:require [iroh.common :as common]
+            [iroh.element.common :as element]))
 
 (defn interface? [class]
   (.isInterface class))

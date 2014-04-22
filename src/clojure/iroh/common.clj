@@ -1,6 +1,8 @@
 (ns iroh.common
   (:import im.chit.iroh.Util))
 
+(def ^:dynamic *cache* (atom {}))
+  
 (defmacro suppress [& body]
   `(try
      ~@body

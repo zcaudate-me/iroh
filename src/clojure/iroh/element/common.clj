@@ -66,5 +66,3 @@
 
 (defn element-params-method [ele]
   (mapv #(symbol (class-convert % :string)) (:params ele)))
-
-(.cast String nil)

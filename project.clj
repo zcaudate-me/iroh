@@ -6,7 +6,9 @@
   :java-source-paths ["src/java"]
   :source-paths ["src/clojure"]
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.tcrawley/dynapath "0.2.3"]]
+                 [org.tcrawley/dynapath "0.2.3"]
+                 [im.chit/hara.namespace.import "2.1.0"]
+                 [im.chit/hara.common "2.1.0"]]
   :profiles {:dev {:dependencies [[midje "1.6.3"]]
                     :plugins [[lein-midje "3.1.3"]]}}
   :documentation {:files {"docs/index"

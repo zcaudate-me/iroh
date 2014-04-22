@@ -1,6 +1,6 @@
 (ns iroh.element.method
   (:require [iroh.common :refer :all]
-            [iroh.hierarchy :refer :all]
+            [iroh.hierarchy :as hierachy]
             [iroh.types.element :refer :all]
             [iroh.element.common :refer :all]
             [iroh.pretty.classes :refer [class-convert]]))
@@ -35,7 +35,7 @@
 (defn to-instance-method [obj body]
   (-> body
       (assoc :params (vec (cons (:container body) (seq (.getParameterTypes obj)))))
-      (assoc :origins (origins obj))))
+      (assoc :origins (hierachy/origins obj))))
 
 (defn to-pre-element [obj]
   (let [body (seed :method obj)
