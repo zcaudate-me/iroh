@@ -6,9 +6,7 @@
             [iroh.pretty.display :as display])
   (:refer-clojure :exclude [.?]))
 
-(defn all-class-members
-  "all-class-members"
-  {:added "0.1.10"}
+(defn- all-class-members
   [class]
   (concat
      (seq (.getDeclaredMethods class))
@@ -16,8 +14,6 @@
      (seq (.getDeclaredFields class))))
 
 (defn list-class-elements
-  "list-class-elements"
-  {:added "0.1.10"}
   ([class]
      (->> (all-class-members class)
           (map types/to-element)))
@@ -27,7 +23,12 @@
             (display/display grp)))))
 
 (defmacro .?
-  ".?"
+  "queries the java view of the class declaration
+
+  (.? String  #\"^c\" :name)
+  => [\"charAt\" \"checkBounds\" \"codePointAt\" \"codePointBefore\"
+      \"codePointCount\" \"compareTo\" \"compareToIgnoreCase\"
+      \"concat\" \"contains\" \"contentEquals\" \"copyValueOf\"]"
   {:added "0.1.10"}
   [obj & selectors]
   `(list-class-elements (common/context-class ~obj) ~(args/args-convert selectors)))

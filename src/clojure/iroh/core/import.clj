@@ -9,21 +9,33 @@
   (:refer-clojure :exclude [>ns >var]))
 
 (defn element-meta
-  "element-meta"
-  {:added "0.1.10"}
   [ele]
-    (-> {}
-        (assoc :arglists (concat (element/element-params ele)))
-        (assoc :doc
-          (if (= :multi (:tag ele)) ""
-            (format "------------------\n\nmember: %s\n\ntype: %s\n\nmodifiers: %s"
-                    (str (.getName (:container ele))
-                         "/" (:name ele))
-                    (classes/class-convert (:type ele) :string)
-                    (string/join ", " (map name (:modifiers ele))))))))
+  (-> {}
+      (assoc :arglists (concat (element/element-params ele)))
+      (assoc :doc
+        (if (= :multi (:tag ele)) ""
+          (format "\nmember: %s\ntype: %s\nmodifiers: %s"
+                  (str (.getName (:container ele))
+                       "/" (:name ele))
+                  (classes/class-convert (:type ele) :string)
+                  (string/join ", " (map name (:modifiers ele))))))))
 
 (defmacro >var
-  ">var"
+  "imports a class method into the current namespace.
+
+  (>var hash-without [clojure.lang.IPersistentMap without])
+
+  (with-out-str (clojure.repl/doc hash-without))
+  => (str \"-------------------------\\n\"
+          \"iroh.core.import-test/hash-without\\n\"
+          \"([clojure.lang.IPersistentMap java.lang.Object])\\n\"
+          \"  \\n\"
+          \"member: clojure.lang.IPersistentMap/without\\n\"
+          \"type: clojure.lang.IPersistentMap\\n\"
+          \"modifiers: instance, method, public, abstract\\n\")
+
+  (eval '(hash-without {:a 1 :b 2} :a))
+  => {:b 2}"
   {:added "0.1.10"}
   ([name [class method & selectors]]
      `(let [var (def ~name (q/.? ~class ~(str method) ~@selectors :#))]
@@ -35,7 +47,11 @@
        ~@(map #(cons `iroh.core.import/>var %) (partition 2 more))]))
 
 (defmacro >ns
-  ">ns"
+  "imports all class methods into its own namespace.
+
+  (map #(.sym %)
+       (>ns test.string String :private #\"serial\"))
+  => '[serialPersistentFields serialVersionUID]"
   {:added "0.1.10"}
   ([ns class & selectors]
      (let [home (.getName *ns*)

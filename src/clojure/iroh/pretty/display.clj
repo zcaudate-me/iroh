@@ -30,9 +30,6 @@
         (map #(select-keys (get % nil) sterms) eles)))))
 
 (defn display
-  "display
-  "
-  {:added "0.1.10"}
   [grp eles]
   ((comp
     (or (merge-terms-fn grp) (first-terms-fn grp) identity)

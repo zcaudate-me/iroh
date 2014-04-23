@@ -41,7 +41,17 @@
     self))
 
 (defn delegate
-  "delegate"
+  "Allow transparent field access and manipulation to the underlying object.
+
+  (let [a   \"hello\"
+        >a  (delegate a)]
+
+    (keys >a) => (just [:hash :hash32 :value] :in-any-order)
+
+    (seq (>a :value)) => [\\h \\e \\l \\l \\o]
+
+    (>a :value (char-array \"world\"))
+    a => \"world\")"
   {:added "0.1.10"}
   [obj]
     (let [fields (->> (map (juxt (comp keyword :name) identity) (q/.* obj :field))
