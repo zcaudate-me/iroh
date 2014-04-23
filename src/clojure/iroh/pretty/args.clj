@@ -16,7 +16,8 @@
                     :delegate})
 
 (defn args-classify
-  "args-classify
+  "classifies inputs into `.?` and `.*` macros through matching argument parameters to different inputs
+
   (map (fn [[i x]] [i (args-classify x)])
        {0  :by-name     ;; sort - :by-params, :by-modifiers, :by-type
         1  :tag         ;; display - :name, :params, :modifiers, :type, :attributes,
@@ -37,7 +38,7 @@
   => [[0 :sort-terms] [1 :select-terms] [2 :first] [3 :merge] [4 :name]
       [5 :name] [6 :predicate] [7 :origins] [8 :any-params] [9 :all-params]
       [10 :params] [11 :num-params] [13 :type] [14 :modifiers]]"
-  {:added "0.1.10"}
+  {:added "0.1.10" :author "Chris Zheng"}
   [arg]
   (cond (sort-terms arg)                 :sort-terms
         (select-terms arg)               :select-terms
@@ -60,7 +61,11 @@
         (hash-map? arg)                  :attribute))
 
 (defn args-convert
-  "args-convert"
+  "converts any symbol in `args` to its primitive class
+
+  (args-convert ['byte]) => [Byte/TYPE]
+
+  (args-convert ['byte Class]) => [Byte/TYPE Class]"
   {:added "0.1.10"}
   [args]
   (let [single-fn #(or (class-convert %) %)]
@@ -78,7 +83,16 @@
         args)))
 
 (defn args-group
-  "args-group"
+  "group inputs together into their respective categories
+
+  (args-group [\"toString\" :public :tag #{String}])
+  => {:name [\"toString\"]
+      :modifiers [:public]
+      :select-terms [:tag]
+      :origins [#{java.lang.String}]}
+
+  (args-group ['int 3 :#])
+  {:type [int], :num-params [3], :merge [:#]}"
   {:added "0.1.10"}
   [args]
   (-> (group-by args-classify args)

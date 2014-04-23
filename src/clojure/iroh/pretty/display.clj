@@ -4,15 +4,11 @@
             [iroh.pretty.display.filter :refer [filter-terms-fn]]
             [iroh.pretty.display.sort :refer [sort-terms-fn]]))
 
-(defn first-terms-fn
-  "first-terms-fn"
-  {:added "0.1.10"}
+(defn- first-terms-fn
   [grp]
   (if (:first grp) first))
 
-(defn merge-terms-fn
-  "merge-terms-fn"
-  {:added "0.1.10"}
+(defn- merge-terms-fn
   [grp]
   (if (:merge grp)
     (fn [eles]
@@ -24,9 +20,7 @@
               (to-element (vec eles))
               (set eles))))))))
 
-(defn select-terms-fn
-  "select-terms-fn"
-  {:added "0.1.10"}
+(defn- select-terms-fn
   [grp]
   (let [sterms (sort (:select-terms grp))]
     (fn [eles]
@@ -36,7 +30,8 @@
         (map #(select-keys (get % nil) sterms) eles)))))
 
 (defn display
-  "display"
+  "display
+  "
   {:added "0.1.10"}
   [grp eles]
   ((comp

@@ -2,30 +2,17 @@
   (:require [iroh.common :refer :all]
             [clojure.walk :as walk]))
 
-            (defmulti invoke-element
-  "invoke-element"
-  {:added "0.1.10"}
+(defmulti invoke-element
   (fn [x & args] (:tag x)))
 
 (defmulti invoke-element
-  "invoke-element"
-  {:added "0.1.10"}
   (fn [x & args] (:tag x)))
 
-(defmulti to-element
-  "to-element"
-  {:added "0.1.10"}
-  type)
+(defmulti to-element type)
 
-(defmulti element-params
-  "element-params"
-  {:added "0.1.10"}
-  :tag)
+(defmulti element-params :tag)
 
-(defmulti format-element
-  "format-element"
-  {:added "0.1.10"}
-  :tag)
+(defmulti format-element :tag)
 
 (defn make-invoke-element-form
   [args]
@@ -67,14 +54,10 @@
 (init-element-type 20)
 
 (defn element
-  "element"
-  {:added "0.1.10"}
   [body]
   (Element. body))
 
 (defn element?
-  "element?"
-  {:added "0.1.10"}
   [x]
   (instance? Element x))
 

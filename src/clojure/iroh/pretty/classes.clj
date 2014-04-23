@@ -5,7 +5,10 @@
 (def class-reps #{:raw :symbol :string :class :container})
 
 (defn type->raw
-  "type->raw"
+  "converts to the raw representation
+
+  (type->raw Class) => \"java.lang.Class\"
+  (type->raw 'byte) => \"B\""
   {:added "0.1.10"}
   [v]
   (let [raw (.getName v)]
@@ -15,7 +18,10 @@
 (declare raw->string)
 
 (defn raw-array->string
-  "raw-array->string"
+  "converts the raw representation to a more readable form
+
+  (raw-array->string \"[[B\") => \"byte[][]\"
+  (raw-array->string \"[Ljava.lang.Class;\") => \"java.lang.Class[]\""
   {:added "0.1.10"}
   [v]
   (if-let [obj-name (second (re-find #"^L(.*);" v))]
@@ -23,7 +29,10 @@
     (raw->string v)))
 
 (defn raw->string
-  "raw->string"
+  "converts the raw array representation to a human readable form
+
+  (raw->string \"[[V\") => \"void[][]\"
+  (raw->string \"[Ljava.lang.String;\") => \"java.lang.String[]\""
   {:added "0.1.10"}
   [v]
   (if (.startsWith v "[")
@@ -32,7 +41,9 @@
         v)))
 
 (defn string-array->raw
-  "string-array->raw"
+  "converts the human readable form to a raw string
+
+  (string-array->raw \"java.lang.String[]\")[Ljava.lang.String;"
   {:added "0.1.10"}
   ([s] (string-array->raw s false))
   ([s arr]
@@ -45,28 +56,38 @@
          s))))
 
 (defn string->raw
-  "string->raw"
+  "converts any string to it's raw representation
+
+  (string->raw \"java.lang.String[]\") => \"[Ljava.lang.String;\"
+
+  (string->raw \"int[][][]\") => \"[[[I\""
   {:added "0.1.10"}
   [v]
   (or (primitive-convert v :string :raw)
       (string-array->raw v)))
 
 (defmulti class-convert-impl
-  "class-convert-impl"
+  "converts a string to its representation. Implementation function
+
+  (class-convert-impl Class  :string) => \"java.lang.Class\"
+
+  (class-convert-impl \"byte\" :class) => Byte/TYPE
+
+  (class-convert-impl \"byte\" :container) => Byte"
   {:added "0.1.10"}
   (fn [v to] (type v)))
 
 (defn class-convert
-  "class-convert"
+  "Converts a class to its representation.
+
+  (class-convert \"byte\") => Byte/TYPE
+
+  (class-convert 'byte :string) => \"byte\"
+
+  (class-convert (Class/forName \"[[B\") :string) => \"byte[][]\""
   {:added "0.1.10"}
   ([v] (class-convert v :class))
   ([v to] (class-convert-impl v to)))
-
-(defn class-convert-strin
-  "class-convert-strin"
-  {:added "0.1.10"}
-  [v]
-  (class-convert v :string))
 
 (defmethod class-convert-impl :default
   [v to])

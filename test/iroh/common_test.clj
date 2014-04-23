@@ -3,47 +3,47 @@
   (:require [iroh.common :refer :all]))
 
 ^{:refer iroh.common/class-array :added "0.1.10"}
-(fact "constructs a typed java array having the same length as `seq`"
+(fact "constructs a typed java array the same length as `seq`"
 
-  (class-array ["1" "2" "3"]) 
+  (class-array ["1" "2" "3"])
   => #(and (-> % type (.getName) (= "[Ljava.lang.String;"))
            (-> % count (= 3))) ;<java.lang.String[] ["1" "2" "3"]>
 )
 
 ^{:refer iroh.common/context-class :added "0.1.10"}
 (fact "If x is a class, return x otherwise return the class of x"
-  
-  (context-class String) 
+
+  (context-class String)
   => String
-  
+
   (context-class "")
   => String)
 
 ^{:refer iroh.common/assoc-if :added "0.1.10"}
 (fact "`assoc` to the map only if the value is non-nil. Accepts multiple arguments."
-  
-  (assoc-if {} :a 1) 
+
+  (assoc-if {} :a 1)
   => {:a 1}
-  
-  (assoc-if {} :a nil) 
+
+  (assoc-if {} :a nil)
   => {})
 
 ^{:refer iroh.common/update-in-if :added "0.1.10"}
 (fact "applies `f` to the nested map value only if it is non-nil."
 
-  (update-in-if {:a {:b 1}} [:a :b] inc) 
+  (update-in-if {:a {:b 1}} [:a :b] inc)
   => {:a {:b 2}}
-  
-  (update-in-if {} [:a :b] inc) 
+
+  (update-in-if {} [:a :b] inc)
   => {})
 
 ^{:refer iroh.common/select-keys-nnil :added "0.1.10"}
 (fact "select-keys that are non-nil"
-  
-  (select-keys-nnil {:a 1 :b 1}) 
+
+  (select-keys-nnil {:a 1 :b 1})
   => {:a 1 :b 1}
-  
-  (select-keys-nnil {:a nil :b 1}) 
+
+  (select-keys-nnil {:a nil :b 1})
   => {:b 1})
 
 ^{:refer iroh.common/is-selected-key :added "0.1.10"}
@@ -80,14 +80,14 @@
   => [#{1} #{2} #{3} #{1 2} #{1 3} #{2 3} #{1 2 3}])
 
 ^{:refer iroh.common/conj-fn :added "0.1.10"}
-(fact "constructs a function that takes a single argument `v` 
+(fact "constructs a function that takes a single argument `v`
   and conj `x` to if. If `v` is empty, then construct it using `f`"
-  
-  ((conj-fn 1) nil) 
+
+  ((conj-fn 1) nil)
   => [1]
-  
-  ((conj-fn [:a 1]) {:b 2}) 
+
+  ((conj-fn [:a 1]) {:b 2})
   => {:a 1 :b 2}
-  
-  ((conj-fn [:a 1] hash-map) nil) 
+
+  ((conj-fn [:a 1] hash-map) nil)
   => {:a 1})

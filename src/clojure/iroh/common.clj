@@ -9,9 +9,9 @@
   hara.common [suppress hash-map? regex?])
 
 (defn class-array
-  "constructs a typed java array having the same length as `seq`
+  "constructs a typed java array the same length as `seq`
 
-  (class-array [\"1\" \"2\" \"3\"]) 
+  (class-array [\"1\" \"2\" \"3\"])
   => <java.lang.String[] [\"1\" \"2\" \"3\"]>"
   {:added "0.1.10"}
   ([seq] (class-array (-> seq first type) seq))
@@ -24,10 +24,10 @@
 
 (defn context-class
   "If x is a class, return x otherwise return the class of x
-  
-  (context-class String) 
+
+  (context-class String)
   => String
-  
+
   (context-class \"\")
   => String"
   {:added "0.1.10"}
@@ -36,11 +36,11 @@
 
 (defn assoc-if
   "`assoc` to the map only if the value is non-nil. Accepts multiple arguments.
-  
-  (assoc-if {} :a 1) 
+
+  (assoc-if {} :a 1)
   => {:a 1}
-  
-  (assoc-if {} :a nil) 
+
+  (assoc-if {} :a nil)
   => {}"
   {:added "0.1.10"}
   ([m k v] (assoc-if m k v identity))
@@ -52,10 +52,10 @@
 (defn update-in-if
   "applies `f` to the nested map value only if it is non-nil.
 
-  (update-in-if {:a {:b 1}} [:a :b] inc) 
+  (update-in-if {:a {:b 1}} [:a :b] inc)
   => {:a {:b 2}}
-  
-  (update-in-if {} [:a :b] inc) 
+
+  (update-in-if {} [:a :b] inc)
   => {}"
   {:added "0.1.10"}
   ([m ks f]
@@ -65,11 +65,11 @@
 
 (defn select-keys-nnil
   "select-keys that are non-nil
-  
-  (select-keys-nnil {:a 1 :b 1}) 
+
+  (select-keys-nnil {:a 1 :b 1})
   => {:a 1 :b 1}
-  
-  (select-keys-nnil {:a nil :b 1}) 
+
+  (select-keys-nnil {:a nil :b 1})
   => {:b 1}"
   {:added "0.1.10"}
   [m]
@@ -155,16 +155,16 @@
            (map #(into #{} %) (combinations x s)))))
 
 (defn conj-fn
-  "constructs a function that takes a single argument `v` 
+  "constructs a function that takes a single argument `v`
   and conj `x` to if. If `v` is empty, then construct it using `f`
-  
-  ((conj-fn 1) nil) 
+
+  ((conj-fn 1) nil)
   => [1]
-  
-  ((conj-fn [:a 1]) {:b 2}) 
+
+  ((conj-fn [:a 1]) {:b 2})
   => {:a 1 :b 2}
-  
-  ((conj-fn [:a 1] hash-map) nil) 
+
+  ((conj-fn [:a 1] hash-map) nil)
   => {:a 1}"
   {:added "0.1.10"}
   ([x] (conj-fn x vector))
