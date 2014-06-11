@@ -43,7 +43,6 @@
            {} v)]
     (multi-element m v)))
 
-
 (defmethod format-element :multi [mele]
   (format "#[%s :: %s]"
           (:name mele)
@@ -86,7 +85,7 @@
       (throw (Exception. (format "Cannot find a suitable candidate function, need %s, invoked with %s."
                                  (format-element mele)
                                  (mapv #(symbol (class-convert
-                                                 (class %) :string))
+                                                 % :string))
                                        aparams))))))
 
 (defmethod invoke-element :multi [mele & args]

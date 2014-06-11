@@ -38,7 +38,7 @@
          :delegate obj}
         (add-annotations obj))))
 
-(defmacro throw-arg-exception [ele args & header]
+(defmacro throw-arg-exception [ele args & [header]]
   `(throw (Exception. (format  "%sMethod `%s` expects params to be of type %s, but was invoked with %s instead"
                                (if ~header ~header "")
                                (str (:name ~ele))
@@ -53,9 +53,9 @@
                 params
                 args)
            (catch im.chit.iroh.BoxException e
-             (println e)
              (throw-arg-exception ele args)))
-      (throw-arg-exception ele args (format "ARGS: %s <-> %s, " (count params) (count args))))))
+      (do (println "hello")
+        (throw-arg-exception ele args (format "ARGS: %s <-> %s, " (count params) (count args)))))))
 
 (defn format-element-method [ele]
   (let [params (map #(class-convert % :string) (:params ele))]

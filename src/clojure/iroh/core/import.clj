@@ -8,10 +8,20 @@
             [iroh.core.query-class :as q])
   (:refer-clojure :exclude [>ns >var]))
 
+(defn process-if-single [args]
+  (if (and (vector? (first (first args)))
+           (= 1 (count (first args))))
+    (first args)
+    args))
+
 (defn element-meta
   [ele]
   (-> {}
-      (assoc :arglists (concat (element/element-params ele)))
+      (assoc :arglists (->> (element/element-params ele)
+                            concat
+                            set
+                            (mapv vec)
+                            (process-if-single)))
       (assoc :doc
         (if (= :multi (:tag ele)) ""
           (format "\nmember: %s\ntype: %s\nmodifiers: %s"
@@ -38,10 +48,10 @@
   => {:b 2}"
   {:added "0.1.10"}
   ([name [class method & selectors]]
-     `(let [var (def ~name (q/.? ~class ~(str method) ~@selectors :#))]
-        (alter-meta! var
-                     (fn [~'m] (merge ~'m (element-meta ~name))))
-        var))
+     `(let [var# (def ~name (q/.? ~class ~(str method) ~@selectors :#))]
+        (alter-meta! var#
+                     (fn [m#] (merge m# (element-meta ~name))))
+        var#))
   ([name pair & more]
      `[(iroh.core.import/>var ~name ~pair)
        ~@(map #(cons `iroh.core.import/>var %) (partition 2 more))]))
