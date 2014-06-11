@@ -13,7 +13,7 @@
 
 ## Whats New
 
-#### 0.1.10
+#### 0.1.11
 
   - `.>` macro now supports both `.accessors` and `:accessor` calls
   - `delegate` added for better object support
@@ -31,13 +31,13 @@ Changed syntax:
 Add to project.clj dependencies:
 
 ```clojure
-[im.chit/iroh "0.1.10"]
+[im.chit/iroh "0.1.11"]
 ```
 
 For working in the repl or emacs, inject the core functionality into your `clojure.core` namespace using [vinyasa](https://github.com/zcaudate/vinyasa) by adding the following to your `~/.lein/profiles.clj` file:
 
 ```clojure
-{:user {:dependencies [[im.chit/iroh "0.1.10"]
+{:user {:dependencies [[im.chit/iroh "0.1.11"]
                        [im.chit/vinyasa "0.2.0"]]
          :injections [(require 'vinyasa.inject)
                       ....
