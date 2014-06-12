@@ -10,7 +10,7 @@
   (with-out-str (clojure.repl/doc hash-without))
   => (str "-------------------------\n"
           "iroh.core.import-test/hash-without\n"
-          "([clojure.lang.IPersistentMap java.lang.Object])\n"
+          "[[clojure.lang.IPersistentMap java.lang.Object]]\n"
           "  \n"
           "member: clojure.lang.IPersistentMap/without\n"
           "type: clojure.lang.IPersistentMap\n"
