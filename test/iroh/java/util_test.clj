@@ -1,18 +1,7 @@
 (ns iroh.java.util-test
   (:use midje.sweet)
   (:require [iroh.common :refer [class-array]]
-            [iroh.util :as util])
-  (:import im.chit.iroh.Util))
-
-(fact "boxArg"
-  (Util/boxArg Float/TYPE 2)
-  => 2.0
-
-  (Util/boxArg Integer/TYPE 2.001)
-  => 2
-
-  (type (Util/boxArg Short/TYPE 1.0))
-  => java.lang.Short)
+            [iroh.util :as util]))
 
 (fact "boxArg"
   (util/box-arg Float/TYPE 2)
@@ -23,7 +12,6 @@
 
   (type (util/box-arg Short/TYPE 1.0))
   => java.lang.Short)
-
 
 (fact "paramArgTypeMatch basics"
   (.isPrimitive Integer/TYPE)
