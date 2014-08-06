@@ -53,10 +53,9 @@
                   (util/box-arg ptype arg))
                 params
                 args)
-           (catch im.chit.iroh.BoxException e
+           (catch Exception e
              (throw-arg-exception ele args)))
-      (do (println "hello")
-        (throw-arg-exception ele args (format "ARGS: %s <-> %s, " (count params) (count args)))))))
+        (throw-arg-exception ele args (format "ARGS: %s <-> %s, " (count params) (count args))))))
 
 (defn format-element-method [ele]
   (let [params (map #(class-convert % :string) (:params ele))]

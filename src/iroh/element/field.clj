@@ -3,8 +3,7 @@
             [iroh.types.element :refer :all]
             [iroh.element.common :refer [seed]]
             [iroh.pretty.classes :refer [class-convert]]
-            [iroh.util :as util])
-  (:import im.chit.iroh.Util))
+            [iroh.util :as util]))
 
 (def patch-field
   (let [mf (.getDeclaredField java.lang.reflect.Field  "modifiers")]
