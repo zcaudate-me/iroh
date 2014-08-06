@@ -1,14 +1,12 @@
-(defproject im.chit/iroh "0.1.11"
+(defproject im.chit/iroh "0.1.12"
   :description "simple class reflection"
   :url "http://www.github.com/zcaudate/iroh"
   :license {:name "The MIT License"
             :url "http://http://opensource.org/licenses/MIT"}
-  :java-source-paths ["src/java"]
-  :source-paths ["src/clojure"]
-  :dependencies [[org.clojure/clojure "1.5.1"]
+  :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.tcrawley/dynapath "0.2.3"]
-                 [im.chit/hara.namespace.import "2.1.0"]
-                 [im.chit/hara.common "2.1.0"]]
+                 [im.chit/hara.namespace.import "2.1.1"]
+                 [im.chit/hara.common "2.1.1"]]
   :profiles {:dev {:dependencies [[midje "1.6.3"]]
                     :plugins [[lein-midje "3.1.3"]]}}
   :documentation {:files {"docs/index"

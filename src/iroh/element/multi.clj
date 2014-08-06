@@ -1,7 +1,7 @@
 (ns iroh.element.multi
   (:require [iroh.types.element :refer :all]
-            [iroh.pretty.classes :refer [class-convert]])
-  (:import im.chit.iroh.Util))
+            [iroh.pretty.classes :refer [class-convert]]
+            [iroh.util :as util]))
 
 (defn get-name [v]
   (let [names (map :name v)]
@@ -61,7 +61,7 @@
        (filter (fn [ele]
                  (println aparams (:params ele))
                  (every? (fn [[ptype atype]]
-                           (Util/paramArgTypeMatch ptype atype))
+                           (util/param-arg-match ptype atype))
                          (map list (:params ele) aparams))))))
 
 (defn find-method-candidate [mele aparams]
@@ -77,7 +77,7 @@
   (if-let [ele (get-in (:lookup mele) [:field 0 []])]
     (and (or (= 0 (count aparams))
              (and (= 1 (count aparams))
-                  (Util/paramArgTypeMatch (:type ele) (first aparams)))))))
+                  (util/param-arg-match (:type ele) (first aparams)))))))
 
 (defn find-candidate [mele aparams]
   (or (find-method-candidate mele aparams)

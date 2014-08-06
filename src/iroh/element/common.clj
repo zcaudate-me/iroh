@@ -1,6 +1,7 @@
 (ns iroh.element.common
   (:require [iroh.types.modifiers :refer [int-to-modifiers]]
-            [iroh.pretty.classes :refer [class-convert]]))
+            [iroh.pretty.classes :refer [class-convert]]
+            [iroh.util :as util]))
 
 (def override
   (doto (.getDeclaredField java.lang.reflect.AccessibleObject "override")
@@ -49,7 +50,7 @@
   (let [params (:params ele)]
     (if (= (count params) (count args))
       (try (mapv (fn [ptype arg]
-                  (im.chit.iroh.Util/boxArg ptype arg))
+                  (util/box-arg ptype arg))
                 params
                 args)
            (catch im.chit.iroh.BoxException e

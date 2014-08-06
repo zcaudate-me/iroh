@@ -22,9 +22,10 @@
         13 'int          ;; match on the type of element
         14 :public       ;; match on modifiers (:public, :static, etc...)
         })
-  => [[0 :sort-terms] [1 :select-terms] [2 :first] [3 :merge] [4 :name]
-      [5 :name] [6 :predicate] [7 :origins] [8 :any-params] [9 :all-params]
-      [10 :params] [11 :num-params] [13 :type] [14 :modifiers]])
+  => (just [[0 :sort-terms] [1 :select-terms] [2 :first] [3 :merge] [4 :name]
+            [5 :name] [6 :predicate] [7 :origins] [8 :any-params] [9 :all-params]
+            [10 :params] [11 :num-params] [13 :type] [14 :modifiers]]
+          :in-any-order))
 
 
 ^{:refer iroh.pretty.args/args-convert :added "0.1.10"}

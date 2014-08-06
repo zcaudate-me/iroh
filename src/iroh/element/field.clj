@@ -2,7 +2,8 @@
   (:require [iroh.common :refer [context-class]]
             [iroh.types.element :refer :all]
             [iroh.element.common :refer [seed]]
-            [iroh.pretty.classes :refer [class-convert]])
+            [iroh.pretty.classes :refer [class-convert]]
+            [iroh.util :as util])
   (:import im.chit.iroh.Util))
 
 (def patch-field
@@ -31,14 +32,14 @@
   ([ele cls]
      (.get (:delegate ele) nil))
   ([ele cls val]
-     (Util/setField (:delegate ele) nil val)
+     (util/set-field (:delegate ele) nil val)
      true))
 
 (defn invoke-instance-field
   ([ele obj]
-     (.get (:delegate ele) (Util/boxArg (:container ele) obj)))
+     (.get (:delegate ele) (util/box-arg (:container ele) obj)))
   ([ele obj val]
-     (Util/setField (:delegate ele) (Util/boxArg (:container ele) obj) val)
+     (util/set-field (:delegate ele) (util/box-arg (:container ele) obj) val)
      true))
 
 (defmethod invoke-element :field
