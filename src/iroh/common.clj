@@ -1,12 +1,10 @@
 (ns iroh.common
-  (:require [hara.namespace.import :as im]
-            [hara.common])
-  (:import im.chit.iroh.Util))
+  (:require [hara.namespace.import :as ns]
+            [hara.common]))
 
 (def ^:dynamic *cache* (atom {}))
   
-(im/import
-  hara.common [suppress hash-map? regex?])
+(ns/import hara.common [suppress hash-map? regex?])
 
 (defn class-array
   "constructs a typed java array the same length as `seq`
