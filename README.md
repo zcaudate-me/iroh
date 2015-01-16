@@ -13,8 +13,8 @@
 
 Iroh has been deprecated. All the functionality has been broken up and split out into two seperate projects:
 
-[hara.reflect](https//www.github.com/zcaudate/hara) - The core functionality
-[vinyasa.reflection](https//www.github.com/zcaudate/vinyasa) - The convenience macros
+- [hara.reflect](https//www.github.com/zcaudate/hara) - The core functionality
+- [vinyasa.reflection](https//www.github.com/zcaudate/vinyasa) - The convenience macros
 
 ## License
 
